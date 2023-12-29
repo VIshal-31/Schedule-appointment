@@ -7,7 +7,9 @@
 
 <div class="container my-4">
   <h2>Contact Form</h2>
-  <form>
+  <form action="{{ route('submit.form') }}" method="POST">
+    <!-- Form fields -->
+    @csrf
     <div class="form-group">
       <label for="name">Name</label>
       <input type="text" class="form-control" id="name" placeholder="Enter your name">
@@ -50,5 +52,5 @@
   </form>
 </div>
 
-  @endsection
+@endsection
 

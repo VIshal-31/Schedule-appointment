@@ -23,8 +23,14 @@
         <!-- Navigation items -->
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="#">Home</a>
+                <form method="POST" action="{{ route('logout') }}">
+                 @csrf
+             <button type="submit">Logout</button>
+            </form>
+
+                
             </li>
+            
             <!-- Add more navigation items -->
         </ul>
     </nav>

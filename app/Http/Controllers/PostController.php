@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\FormSubmission;
 use Illuminate\Http\Request;
 use App\Models\Post;
 
@@ -15,9 +15,7 @@ class PostController extends Controller
 
 
     public function store(Request $request)
-    {    
-    
-    try{
+    {       
         $request->validate([
             'title' => 'required|unique:posts|max:255',
             'body' => 'required|min:3',
@@ -35,9 +33,28 @@ class PostController extends Controller
 
         return back()->with('success', 'Data Submitted !!!');
         
-    } catch (\Exception $e) {
-        dd($e->getMessage()); // Output any database-related error messages
-    }
-}
-    
+    } 
+   
+
+    public function Enquire(Request $request)
+    {
+        
+        $formData = $request->validate([
+            // 'name' => 'required|string',
+            // 'email' => 'required|email',
+            // 'category' => 'required|string',
+            // 'service' => 'required|string',
+            // 'date' => 'required|date',
+            // 'time' => 'required',
+            // 'message' => 'required|string',
+         ]);
+        
+         $formSubmission = FormSubmission::create($formData);
+        
+         // Optionally, return a response or redirect
+         return back()->with('success', 'Data Submitted !!!');
+        }
+
+
+
 }
