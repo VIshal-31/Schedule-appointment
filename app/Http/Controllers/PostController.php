@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use App\Models\FormSubmission;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\Enquire;
+
 
 class PostController extends Controller
 {
@@ -40,19 +42,18 @@ class PostController extends Controller
     {
         
         $formData = $request->validate([
-            // 'name' => 'required|string',
-            // 'email' => 'required|email',
-            // 'category' => 'required|string',
-            // 'service' => 'required|string',
-            // 'date' => 'required|date',
-            // 'time' => 'required',
-            // 'message' => 'required|string',
+            'name' => 'required|string',
+            'email' => 'required|email',
+            'category' => 'required|string',
+            'service' => 'required|string',
+            'date' => 'required|date',
+            'time' => 'required',
+            'message' => 'required|string',
          ]);
         
-         $formSubmission = FormSubmission::create($formData);
-        
-         // Optionally, return a response or redirect
-         return back()->with('success', 'Data Submitted !!!');
+         $Enquire = FormSubmission::create($formData);
+
+        return back()->with('success', 'Data Submitted !!!');
         }
 
 
