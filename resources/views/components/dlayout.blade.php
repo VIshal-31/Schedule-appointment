@@ -43,7 +43,7 @@
                 <div class="card">
                     <div class="card-body">
                         <!-- Sidebar content -->
-                        <a href="{{ route('dashboard/NewRequest') }}"><ul class="list-group">
+                        <a href="{{ route('dashboard.requests') }}"><ul class="list-group">
                             <li class="list-group-item">New Request</li>
                             <!-- Add more sidebar items -->
                         </ul></a>
@@ -52,7 +52,7 @@
                 <div class="card">
                     <div class="card-body">
                         <!-- Sidebar content -->
-                        <a href="{{ route('dashboard/category') }}"><ul class="list-group">
+                        <a href="{{ route('dashboard.categories') }}"><ul class="list-group">
                             <li class="list-group-item">Category</li>
                             <!-- Add more sidebar items -->
                         </ul></a>
@@ -61,7 +61,7 @@
                 <div class="card">
                     <div class="card-body">
                         <!-- Sidebar content -->
-                        <a href="{{ route('dashboard/service') }}"><ul class="list-group">
+                        <a href="{{ route('dashboard.services') }}"><ul class="list-group">
                             <li class="list-group-item">Service</li>
                             <!-- Add more sidebar items -->
                         </ul></a>

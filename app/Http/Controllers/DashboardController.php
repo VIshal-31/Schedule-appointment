@@ -11,21 +11,10 @@ class DashboardController extends Controller
         return view('dashboard.index');
     }
 
-    public function newrequest()
+    public function requests()
     {
-        return view('dashboard.newrequest');
+        return view('dashboard.requests');
     }
-
-    public function category()
-    {
-        return view('dashboard.category');
-    }
-
-    public function service()
-    {
-        return view('dashboard.service');
-    }
-
     
     // Other methods for different dashboard functionalities
 }

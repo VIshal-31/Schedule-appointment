@@ -41,10 +41,11 @@
             </div>
             <div class="modal-body">
                 <!-- Add Category Form -->
-                <form>
+                <form action="{{ route('categories.store') }}" method="POST">
+                    @csrf    
                     <div class="form-group">
                         <label for="categoryName">Category Name</label>
-                        <input type="text" class="form-control" id="categoryName" placeholder="Enter Category">
+                        <input name="categoryName" type="text" class="form-control" id="categoryName" placeholder="Enter Category">
                     </div>
                     <!-- Add more form fields as needed -->
                     <button type="submit" class="btn btn-primary">Add</button>
