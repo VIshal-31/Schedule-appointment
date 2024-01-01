@@ -6,6 +6,15 @@
 
 <div class="col-md-9">
 <div class="container mt-4">
+         @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @error('categoryName')
+            <span class="text-red-500 py-2 my-3 text-danger bg-light">{{ $message }}</span>
+        @enderror
     <h2>Category Table</h2>
     <table class="table">
         <thead>
@@ -16,11 +25,13 @@
         </thead>
         <tbody>
             <!-- Sample data -->
-            <tr>
-                <td>Category A</td>
-                <td>2023-01-15 09:30 AM</td>
-            </tr>
-            <!-- Add more rows for additional data -->
+                @foreach($categories as $category)
+                    <tr>
+                        <td>{{ $category->name }}</td>
+                        <td>{{ $category->created_at }}</td> <!-- Adjust this based on your date format -->
+                    </tr>
+                @endforeach 
+                <!-- ows for additional data --> -->
         </tbody>
     </table>
     <!-- Button trigger modal -->
@@ -46,9 +57,11 @@
                     <div class="form-group">
                         <label for="categoryName">Category Name</label>
                         <input name="categoryName" type="text" class="form-control" id="categoryName" placeholder="Enter Category">
+                        
                     </div>
                     <!-- Add more form fields as needed -->
                     <button type="submit" class="btn btn-primary">Add</button>
+                    
                 </form>
             </div>
         </div>

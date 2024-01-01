@@ -8,12 +8,16 @@ use Illuminate\Validation\Rule;
 
 
 
+
 class CategoryController extends Controller
 {
     public function index()
     {
-        // Logic for displaying categories
-        return view('dashboard.categories.index');
+        // Fetch categories from the database
+        $categories = Category::all();
+
+        // Pass the $categories variable to the view
+        return view('dashboard.categories.index', compact('categories'));
     }
 
     
