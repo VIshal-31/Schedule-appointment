@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use Illuminate\Validation\Rule;
+
 
 
 class CategoryController extends Controller
@@ -45,8 +47,11 @@ class CategoryController extends Controller
     {
         // Validate the form data
         $validatedData = $request->validate([
-            'categoryName' => 'required|max:255', // Adjust validation rules as needed
-            // Add more validation rules for other fields if necessary
+            'categoryName' => [
+                'required',
+                'max:255',
+                Rule::unique('categories', 'name'), // Ensure 'name' is unique in the 'categories' table
+            ],
         ]);
 
         // Create a new category using the validated data
