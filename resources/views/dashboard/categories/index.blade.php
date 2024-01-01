@@ -31,7 +31,7 @@
                         <td>{{ $category->created_at }}</td> <!-- Adjust this based on your date format -->
                     </tr>
                 @endforeach 
-                <!-- ows for additional data --> -->
+                <!-- ows for additional data -->    
         </tbody>
     </table>
     <!-- Button trigger modal -->
