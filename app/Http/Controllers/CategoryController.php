@@ -29,8 +29,8 @@ class CategoryController extends Controller
 
     public function edit(Category $category)
     {
-        // Show the form to edit a specific category
-        return view('categories.edit', ['category' => $category]);
+        // Fetch the category data and pass it to the view
+        return view('categories.edit', compact('category'));
     }
 
     public function update(Request $request, Category $category)

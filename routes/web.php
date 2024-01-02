@@ -42,3 +42,5 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::post('/submit-form', [PostController::class, 'Enquire'])->name('submit.form');
 
 Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+
+Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');

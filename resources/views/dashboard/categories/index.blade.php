@@ -21,6 +21,7 @@
             <tr>
                 <th>Category</th>
                 <th>Created Time</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +30,12 @@
                     <tr>
                         <td>{{ $category->name }}</td>
                         <td>{{ $category->created_at }}</td> <!-- Adjust this based on your date format -->
+                        <td>
+                        
+                            <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                            <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ $category->id }})">Delete</button>
+                        
+                        </td>
                     </tr>
                 @endforeach 
                 <!-- ows for additional data -->    
@@ -68,4 +75,13 @@
     </div>
 </div>
 </div>
+
+<script>
+    function confirmDelete(categoryId) {
+        if (confirm("Are you sure you want to delete this category?")) {
+            // If the user confirms, redirect to the delete route using the category ID
+            window.location.href = `/categories/${categoryId}`;
+        }
+    }
+</script>
 @endsection

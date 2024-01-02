@@ -13,7 +13,7 @@ class DashboardController extends Controller
 
     public function requests()
     {
-        return view('dashboard.requests');
+        return view('dashboard.request');
     }
     
     // Other methods for different dashboard functionalities
