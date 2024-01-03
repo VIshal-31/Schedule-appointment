@@ -33,8 +33,11 @@
                         <td>
                         
                             <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                            <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ $category->id }})">Delete</button>
-                        
+                            <form action="{{ route('categories.destroy', $category->id) }}" method="POST" style="display: inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this category?')">Delete</button>
+                            </form>
                         </td>
                     </tr>
                 @endforeach 
@@ -84,4 +87,5 @@
         }
     }
 </script>
+
 @endsection

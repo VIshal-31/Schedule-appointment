@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/categories', [CategoryController::class, 'index'])->name('dashboard.categories');
     Route::get('/dashboard/services', [ServiceController::class, 'index'])->name('dashboard.services');
     // Add more routes as needed...
+    
 });
 
 // Posts routes
@@ -43,4 +44,21 @@ Route::post('/submit-form', [PostController::class, 'Enquire'])->name('submit.fo
 
 Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
 
-Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+Route::get('dashborad/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+
+Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+
+Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+
+
+// service store
+Route::post('/categories/services', [ServiceController::class, 'store'])->name('services.store');
+
+// Route to retrieve the edit form for services
+Route::get('dashborad/services/{service}/edit', [ServiceController::class, 'edit'])->name('services.edit');
+
+// Route to update services
+Route::put('/services/{service}', [ServiceController::class, 'update'])->name('services.update');
+
+// Route to delete services
+Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');

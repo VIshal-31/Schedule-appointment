@@ -15,8 +15,6 @@ class CategoryController extends Controller
     {
         // Fetch categories from the database
         $categories = Category::all();
-
-        // Pass the $categories variable to the view
         return view('dashboard.categories.index', compact('categories'));
     }
 
@@ -24,27 +22,27 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         // Show a specific category
-        return view('categories.show', ['category' => $category]);
+        return view('dashboard.categories.show', ['category' => $category]);
     }
 
     public function edit(Category $category)
     {
         // Fetch the category data and pass it to the view
-        return view('categories.edit', compact('category'));
+        return view('dashboard.categories.edit', compact('category'));
     }
 
     public function update(Request $request, Category $category)
     {
         // Update a specific category
         $category->update($request->all());
-        return redirect()->route('categories.index');
+        return redirect()->route('dashboard.categories');
     }
 
     public function destroy(Category $category)
     {
-        // Delete a specific category
-        $category->delete();
-        return redirect()->route('categories.index');
+    $category->delete();
+
+    return redirect()->route('dashboard.categories')->with('success', 'Category deleted successfully');
     }
 
     public function store(Request $request)

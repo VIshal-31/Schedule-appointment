@@ -6,16 +6,21 @@
 
 <div class="col-md-9">
 
-    <h1>Edit Category</h1>
-    <!-- Form for editing category details -->
-    <form method="POST" action="{{ route('categories.update', $category->id) }}">
-        @csrf
-        @method('PUT') <!-- For Laravel 8 and above, use @method('PUT') -->
-        <!-- Include input fields to update category details -->
-        <input type="text" name="name" value="{{ $category->name }}">
-        <!-- Other input fields -->
-        <button type="submit">Update</button>
-    </form>
-</div>
+            <div class="modal-body">
+                <!-- Add Category Form -->
+                <form method="POST" action="{{ route('categories.update', $category->id) }}">
+              @csrf
+                 @method('PUT')    
+                    <div class="form-group">
+                        <label for="categoryName">Category Name</label>
+                        <input type="text" name="name" value="{{ $category->name }}">
+                    </div>
+                    <!-- Add more form fields as needed -->
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    
+                </form>
+            </div>
+            </div>
+
 
 @endsection

@@ -13,4 +13,12 @@ class Service extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    protected $fillable = [
+       'name', 'category_id',
+        // other fillable fields...
+    ];
+
 }
+
+
