@@ -36,19 +36,16 @@
     <div class="form-group">
       <label for="category">Category</label>
       <select class="form-control" id="category" name="category">
-        <option value="">Select category</option>
-        <option value="category1">Category 1</option>
-        <option value="category2">Category 2</option>
-        <option value="category3">Category 3</option>
+        <option value="">Please Select Category</option>
+        @foreach ($categories as $category)
+        <option id="{{ $category->id }}" value="{{ $category->name }}">{{ $category->name }}</option>
+       @endforeach
       </select>
     </div>
     <div class="form-group">
       <label for="service">Service</label>
       <select class="form-control" id="service" name="service">
         <option value="">Select service</option>
-        <option value="service1">Service 1</option>
-        <option value="service2">Service 2</option>
-        <option value="service3">Service 3</option>
       </select>
     </div>
     <div class="form-group">
@@ -67,6 +64,36 @@
   </form>
   
 </div>
+
+<!-- JavaScript -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#category').change(function() {
+          var categoryId = $(this).find(':selected').attr('id');
+        
+            
+            if (categoryId) {
+                $.ajax({
+                    type: "GET",
+                    url: "/get-services/" + categoryId,
+                    success: function(data) {
+                        $('#service').empty();
+                        $('#service').append('<option value="">Select service</option>');
+                        $.each(data, function(key, value) {
+                            $('#service').append('<option value="' + value.name + '">' + value.name + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#service').empty();
+                $('#service').append('<option value="">Select service</option>');
+            }
+        });
+    });
+</script>
+
+
 
 @endsection
 

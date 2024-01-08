@@ -100,4 +100,9 @@ class ServiceController extends Controller
         $service->delete();
         return redirect()->route('dashboard.services')->with('success', 'Service deleted successfully');
     }
+
+    public function getServicesByCategory($categoryId) {
+        $services = Service::where('category_id', $categoryId)->get();
+        return response()->json($services);
+    }
 }

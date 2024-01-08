@@ -6,12 +6,15 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DomainController;
 
 
-// Home and aboutus routes
-Route::get('/', function () {
-    return view('home');
-});
+
+
+
+//home
+Route::get('/', [DomainController::class, 'index'])->name('index');
+
 
 Route::get('/aboutus', function () {
     return view('aboutus');
@@ -62,3 +65,9 @@ Route::put('/services/{service}', [ServiceController::class, 'update'])->name('s
 
 // Route to delete services
 Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
+
+
+Route::get('/get-services/{category_id}', [DomainController::class, 'getServices'])->name('get.services');
+
+
+Route::get('services/{category}', 'ServiceController@getServicesByCategory');

@@ -34,8 +34,8 @@
             </thead>
             <tbody id="serviceTableBody">
                 @foreach($categories as $category)
-                    <tr>
-                        <th colspan="5">{{ $category->name }}</th>
+                    <tr >
+                        <th class="py-4" colspan="5">CATEGORY -  {{ $category->name }}</th>
                     </tr>
                     @foreach($category->services as $index => $service)
                         <tr>
