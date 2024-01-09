@@ -6,6 +6,7 @@
     <!-- Bootstrap CSS -->
     <link rel="icon" href="{{ asset('favicon.png') }}" type="image/x-icon">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Your Custom CSS -->
     <link href="styles.css" rel="stylesheet">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -45,6 +46,15 @@
                         <!-- Sidebar content -->
                         <a href="{{ route('dashboard.requests') }}"><ul class="list-group">
                             <li class="list-group-item">New Request</li>
+                            <!-- Add more sidebar items -->
+                        </ul></a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Sidebar content -->
+                        <a href="{{ route('dashboard.shopdetails') }}"><ul class="list-group">
+                            <li class="list-group-item">Shop Details</li>
                             <!-- Add more sidebar items -->
                         </ul></a>
                     </div>

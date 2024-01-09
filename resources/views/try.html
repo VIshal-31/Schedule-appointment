@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dynamic Calendar Selection</title>
+  <style>
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+    .calendar label {
+      display: block;
+      text-align: center;
+      padding: 5px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+    .selected {
+      background-color: lightblue;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <label for="month">Select a month:</label>
+  <select id="month" onchange="updateCalendar()">
+    <!-- Options for months -->
+  </select>
+
+  <label for="year">Select a year:</label>
+  <input type="number" id="year" min="1900" max="2100" value="2024" onchange="updateCalendar()">
+
+  <div class="calendar" id="calendar"></div>
+
+  <script>
+    // Function to create the calendar
+    function createCalendar(year, month) {
+      const calendarDiv = document.getElementById("calendar");
+      calendarDiv.innerHTML = '';
+
+      const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      daysOfWeek.forEach(day => {
+        const dayLabel = document.createElement("label");
+        dayLabel.textContent = day;
+        calendarDiv.appendChild(dayLabel);
+      });
+
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstDayIndex = new Date(year, month, 1).getDay();
+
+      for (let i = 0; i < firstDayIndex; i++) {
+        const emptyLabel = document.createElement("label");
+        calendarDiv.appendChild(emptyLabel);
+      }
+
+      for (let i = 1; i <= daysInMonth; i++) {
+        const label = document.createElement("label");
+        label.setAttribute("onclick", `selectDate(${year}, ${month}, ${i})`);
+        label.textContent = i;
+        calendarDiv.appendChild(label);
+      }
+    }
+
+    // Function to handle date selection
+    function selectDate(year, month, day) {
+      const selectedDate = new Date(year, month, day);
+      const labels = document.querySelectorAll('.calendar label');
+      labels.forEach(label => label.classList.remove('selected'));
+
+      const selectedLabel = event.target;
+      selectedLabel.classList.add('selected');
+      console.log(`Selected date: ${selectedDate.toDateString()}`);
+    }
+
+    // Update the calendar when the month or year is changed
+    function updateCalendar() {
+      const selectedYear = document.getElementById("year").value;
+      const selectedMonth = document.getElementById("month").value;
+      createCalendar(selectedYear, selectedMonth);
+    }
+
+    // Populate the month dropdown
+    const monthSelect = document.getElementById("month");
+    const months = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    months.forEach((month, index) => {
+      const option = document.createElement("option");
+      option.value = index;
+      option.textContent = month;
+      monthSelect.appendChild(option);
+    });
+
+    // Create the calendar for the current month on page load
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    createCalendar(currentYear, currentMonth);
+  </script>
+
+</body>
+</html>
