@@ -15,7 +15,7 @@ class Service extends Model
     }
 
     protected $fillable = [
-       'name', 'category_id',
+       'name', 'category_id', 'time_required'
         // other fillable fields...
     ];
 

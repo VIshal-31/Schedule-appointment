@@ -28,12 +28,15 @@ class ServiceController extends Controller
                     return $query->where('category_id', $request->category_id);
                 }),
             ],
+            'timerequired' => 'required|numeric',
             // Other validation rules
         ]);
 
         $service = Service::create([
             'category_id' => $validatedData['category_id'],
             'name' => $validatedData['name'],
+            'time_required' => $validatedData['timerequired'],
+
             // Other fields as necessary
         ]);
 
@@ -72,11 +75,14 @@ class ServiceController extends Controller
                     }),
                 ],
                 // Other validation rules
+                'timerequired' => 'required|numeric',
             ]);
 
             $service->update([
                 'category_id' => $validatedData['category_id'],
                 'name' => $validatedData['name'],
+                'time_required' => $validatedData['timerequired'],
+
                 // Other fields as necessary
             ]);
            

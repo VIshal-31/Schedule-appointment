@@ -8,6 +8,8 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DomainController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\HolidayController;
+
 
 
 
@@ -38,7 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/requests', [DashboardController::class, 'requests'])->name('dashboard.requests');
     Route::get('/dashboard/categories', [CategoryController::class, 'index'])->name('dashboard.categories');
     Route::get('/dashboard/services', [ServiceController::class, 'index'])->name('dashboard.services');
-    Route::get('/dashboard/shopdetails' , [ShopController::class, 'index'])->name('dashboard.shopdetails');
+    Route::get('/dashboard/shop' , [ShopController::class, 'index'])->name('dashboard.shop');
     // Add more routes as needed...  
     
     
@@ -72,4 +74,17 @@ Route::middleware('auth')->group(function () {
     Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
     Route::get('/get-services/{category_id}', [DomainController::class, 'getServices'])->name('get.services');
     Route::get('services/{category}', 'ServiceController@getServicesByCategory');
+
+    // Shops table
+    Route::post('/shop/login', [ShopController::class, 'saveShop'])->name('save.shop');
+    Route::post('/dashboard/shopname', [ShopController::class, 'updateShopName'])->name('update.shop.name');
+    Route::post('/dashboard/shopstarttime', [ShopController::class, 'updateShopStartTime'])->name('update.shop.start-time');
+    Route::post('/dashboard/shopclosingtime', [ShopController::class, 'updateShopCloseTime'])->name('update.shop.closing-time');
+    Route::post('/dashboard/updatedays', [ShopController::class, 'updateDays'])->name('update.shop.workingdays');
+
+    //holidays  
+    Route::post('/holidays', [HolidayController::class, 'store'])->name('holidays.store');
+
+    Route::post('/dashboard/shopholidaysfilter', [ShopController::class, 'showFilteredHolidays'])->name('dashboard.showFilteredHolidays');
+    
 });

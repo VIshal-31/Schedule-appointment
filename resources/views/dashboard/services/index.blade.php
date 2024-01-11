@@ -21,13 +21,18 @@
                 </ul>
             </div>
         @endif
-        <h2>Service Table</h2>
+        <div class="row my-2">
+            <h2 class="col-10">Service Table</h2>
+            <button type="button" class="col-2 btn btn-primary" data-toggle="modal" data-target="#addServiceModal">
+            Add Service
+        </button></div>
         <table class="table">
             <thead>
                 <tr>
                     <th>Sr. No</th>
                     <th>Service</th>
                     <th>Category</th>
+                    <th>Time Required</th>
                     <th>Created Time</th>
                     <th>Action</th>
                 </tr>
@@ -42,6 +47,7 @@
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $service->name }}</td>
                             <td>{{ $category->name }}</td>
+                            <td>{{ $service->time_required }}</td>
                             <td>{{ $service->created_at }}</td>
                             <td>
                                 <a href="{{ route('services.edit', $service->id) }}" class="btn btn-primary btn-sm">Edit</a>
@@ -57,9 +63,7 @@
             </tbody>
         </table>
         <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addServiceModal">
-            Add Service
-        </button>
+        
     </div>
 
     <!-- Add Service Modal -->
@@ -88,6 +92,10 @@
                         <div class="form-group">
                             <label for="serviceName">Service Name</label>
                             <input type="text" name="name" class="form-control" id="serviceName" placeholder="Enter Service Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="timerequired">Time Required For Serivce (In minute)</label>
+                            <input type="number" name="timerequired" class="form-control" id="timerequired" placeholder="Time Required In Min">
                         </div>
                         <button type="submit" class="btn btn-primary" id="addServiceBtn">Add</button>
                     </form>

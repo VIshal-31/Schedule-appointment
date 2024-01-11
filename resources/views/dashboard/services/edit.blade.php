@@ -31,6 +31,10 @@
             <label for="service_name">Service Name</label>
             <input type="text" name="name" class="form-control" id="service_name" value="{{ $service->name }}">
         </div>
+        <div class="form-group">
+                            <label for="timerequired">Time Required For Serivce (In minute)</label>
+                            <input value="{{ $service->time_required }}" type="number" name="timerequired" class="form-control" id="timerequired" placeholder="{{ $service->time_required }}">
+                        </div>
         <!-- Other form fields -->
         <button type="submit" class="btn btn-primary">Update</button>
     </form>
