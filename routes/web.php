@@ -31,7 +31,7 @@ Route::post('/login', [LoginController::class, 'login']);
 
 // register method
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
-
+Route::get('/get-services/{category_id}', [DomainController::class, 'getServices'])->name('get.services');
 
 // Dashboard routes
 Route::middleware('auth')->group(function () {
@@ -72,7 +72,7 @@ Route::middleware('auth')->group(function () {
     
     // Route to delete services
     Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
-    Route::get('/get-services/{category_id}', [DomainController::class, 'getServices'])->name('get.services');
+    
     Route::get('services/{category}', 'ServiceController@getServicesByCategory');
 
     // Shops table

@@ -8,6 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Shop extends Model
 {
     use HasFactory;
-    protected $fillable = ['name']; // Define the fillable fields
-
+    protected $fillable = ['name', 'start_time', 'end_time'];
 }
