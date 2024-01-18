@@ -54,7 +54,7 @@
     @yield('slot')
 
 <footer class= "bg-dark container-fluid p-5">
-    <div class="row">
+    <div class="row col-12">
     <div class="col-4">
         <div>
              <img src="{{ asset('/logo/logo.png') }}" width="200">
@@ -62,14 +62,20 @@
     </div>
     <div class="col-4">
         <div class= "p-2 m-2 text-light">
-            <ul>abstract</ul>
-            <ul>json</ul>
-            <ul>test</ul>
-            <ul>java</ul>
+          <ul>Services:</ul>
+          <ul>Web Development</ul>
+            <ul>UI / UX Design</ul>
+            <ul>Digital Marketing</ul>
+            <ul>App Development</ul>
         </div>
     </div>
     <div class="col-4">
-        <div></div>
+        <div class= "p-2 m-2 text-light">
+            <ul>Contact Details:</ul>
+            <ul><a class="text-light" href="tel:8788365607">8788365607</a></ul>
+            <ul><a class="text-light" href="mailto:vishal@webwideit.solutions">vishal@webwideit.solutions</a></ul>
+            <ul><a class="text-light" href=""><img src="{{ asset('/logo/logo.png') }}" width="50"></a><a class="text-light" href=""><img src="{{ asset('/logo/logo.png') }}" width="50"></a><a class="text-light" href=""><img src="{{ asset('/logo/logo.png') }}" width="50"></a></ul>
+          </div>
     </div>
     </div>
 </footer>

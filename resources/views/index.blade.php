@@ -8,7 +8,7 @@
 <div class="container my-4">
   <div class="d-flex align-items-center justify-content-center m-4"><h1><b>{{ $shop->name }}</b></h1></div>
   <hr>
-  <div class="row my-4"><h3 class="col">Book Your Appoitment Now</h3><h4>Opening Time : {{ $shop->opening_time }} - Closing Time : {{ $shop->closing_time }}</h4></div>
+  <div class="row mx-0 my-4"><h3 class="col">Book Your Appoitment Now</h3><h4>Opening Time : {{ $shop->opening_time }} - Closing Time : {{ $shop->closing_time }}</h4></div>
   @if(session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
@@ -55,12 +55,12 @@
    
 
     <div class="form-group">
-    <div class="row"><div class="col"><b>Select Date:</b></div><div class="col d-flex align-items-end justify-content-end" id="workingDaysOutput"></div> </div>
+    <div class="row m-0"><div class="col"><b>Select Date:</b></div><div class="col d-flex align-items-end justify-content-end" id="workingDaysOutput"></div> </div>
     <label for="date">  </label>
       <input type="hidden" class="form-control" id="date" name="date">
       <!-- calander start -->
       <div class="">
-        <div class="calendar-header row d-flex align-items-center">
+        <div class="calendar-header row m-0 d-flex align-items-center">
           <i class="bi bi-caret-left col" id="previousmonth"></i><h2 class="col-8" id="month-year"></h2><i id="nextmonth" class="bi bi-caret-right col"></i>
         </div>
         <div class="calendar-days" id="calendar-days"></div>
@@ -211,8 +211,7 @@ function updateTimeSlots(timeSlots) {
     }
   </style>
   
-  
-<!-- calander JS -->
+ <!-- Calendar JS -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const today = new Date();
@@ -256,28 +255,24 @@ document.addEventListener("DOMContentLoaded", function () {
             const day = document.createElement('div');
             day.classList.add('day');
 
-            // Check if the day is a working day
-            const currentDay = new Date(currentYear, currentMonth, i).toLocaleDateString('en-US', { weekday: 'short' });
+            const currentDate = new Date(currentYear, currentMonth, i);
+            const currentDay = currentDate.toLocaleDateString('en-US', { weekday: 'short' });
+            const isPastDate = currentDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const isHoliday = holidayDates.includes(`${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}`);
 
-            // Check if the day is a holiday
-            const isHoliday = holidayDates.includes(`${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}`) || !workingDays.includes(currentDay);
-
-            // Set the text for all days
             day.innerText = i;
 
-            if (!workingDays.includes(currentDay)) {
-                day.classList.add('disabled');
+            if (!workingDays.includes(currentDay) || isPastDate) {
+                day.classList.add('disabled', 'holiday');
             } else {
                 day.addEventListener('click', function () {
                     const clickedDate = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}`;
 
-                    // Remove 'selected' class from all days
                     const days = document.querySelectorAll('.day');
                     days.forEach(function (d) {
                         d.classList.remove('selected');
                     });
 
-                    // Add 'selected' class to the clicked day
                     this.classList.add('selected');
 
                     document.getElementById('date').value = clickedDate;
@@ -285,9 +280,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             }
 
-            // Add additional classes for holidays
-            if (isHoliday) {
-                day.classList.add('disabled', 'holiday');
+            if (isHoliday && currentDate.toISOString().split('T')[0] !== today.toISOString().split('T')[0]) {
+                day.classList.add('holiday');
             }
 
             calendarDays.appendChild(day);
@@ -297,26 +291,29 @@ document.addEventListener("DOMContentLoaded", function () {
     renderCalendar();
 
     document.getElementById('previousmonth').addEventListener('click', function () {
-        currentMonth = (currentMonth - 1 + 12) % 12; // Ensure positive modulo
-        if (currentMonth === 0) {
-            currentYear--;
-        }
-        renderCalendar();
-    });
+    currentMonth = (currentMonth - 1 + 12) % 12; // Ensure positive modulo
 
-    document.getElementById('nextmonth').addEventListener('click', function () {
-        currentMonth = (currentMonth + 1) % 12;
-        if (currentMonth === 0) {
-            currentYear++;
-        }
-        renderCalendar();
-    });
+    // Update currentYear based on the change in currentMonth
+    if (currentMonth === 11) {
+        currentYear--;
+    }
+
+    renderCalendar();
+});
+
+document.getElementById('nextmonth').addEventListener('click', function () {
+    currentMonth = (currentMonth + 1) % 12;
+
+    // Update currentYear based on the change in currentMonth
+    if (currentMonth === 0) {
+        currentYear++;
+    }
+
+    renderCalendar();
+});
 });
 
 </script>
-
-
-
 
   <!-- show working days -->
   <script>
