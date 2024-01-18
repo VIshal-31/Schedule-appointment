@@ -15,7 +15,7 @@
             <th>Category</th>
             <th>Service</th>
             <th>Date</th>
-            <th>Time</th>
+            <th>Time Slot</th>
             <th>Message</th>
             <th>Request Time</th>
         </tr>

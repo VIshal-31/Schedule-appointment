@@ -19,9 +19,9 @@
 <body class="">
 
  <!-- nav bar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-dark" >
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color:#000;">
   <a class="navbar-brand" href="/">
-    <img src="{{ asset('/logo/logo.png') }}" width="150">
+    <img src="{{ asset('/logo/logo.png') }}" width="100">
   </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" style="background: transparent !important;border: none;color: white;" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -47,7 +47,7 @@
       </li>
    
     </ul>
-  <button type="button" class="nav-item btn btn-primary px-3 px-sm-3 px-md-3 px-lg-3  py-2 py-sm-2 py-md-2 py-lg-3  m-0 m-sm-0 m-md-0 m-lg-4" style="font-size: 22px;">Contact Us</button>
+  <button type="button" class="nav-item btn px-3 px-sm-3 px-md-3 px-lg-3  py-2 py-sm-2 py-md-2 py-lg-2  m-0 m-sm-0 m-md-0 m-lg-3" style="font-size: 18px;">Contact Us</button>
   </div>
 </nav>
 

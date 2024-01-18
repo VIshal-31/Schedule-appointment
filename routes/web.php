@@ -23,8 +23,15 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::get('/posts/create1', [PostController::class, 'create'])->name('posts.create1');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('registerview');
- 
 
+// get data in form 
+Route::get('/get-time-slots/{service}', [DomainController::class, 'getTimeSlots'])->name('getTimeSlots');
+Route::get('/get-pre-booked-slots/{date}', [DomainController::class, 'getPreBookedSlots'])->name('get.pre.booked.slots');
+// Route::get('/get-holidays', [DomainController::class, 'getHolidays'])->name('getHolidays');
+
+
+// Appoitment Form
+Route::post('/submit-form', [PostController::class, 'Enquire'])->name('submit.form');
 
 // login method
 Route::post('/login', [LoginController::class, 'login']);
@@ -50,7 +57,7 @@ Route::middleware('auth')->group(function () {
 
     
     // Form submission route
-    Route::post('/submit-form', [PostController::class, 'Enquire'])->name('submit.form');
+
     
     Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
     

@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class ServiceTimeSlot extends Model
 {
     protected $fillable = [
