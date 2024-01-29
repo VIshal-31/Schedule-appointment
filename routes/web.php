@@ -10,6 +10,9 @@ use App\Http\Controllers\DomainController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\EnquireController;
+use App\Http\Controllers\CalendarController;
+
+
 
 //views
 Route::get('/', [DomainController::class, 'index'])->name('index');
@@ -42,6 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/enquire', [EnquireController::class, 'index'])->name('dashboard.enquire');
     Route::get('/dashboard/categories', [CategoryController::class, 'index'])->name('dashboard.categories');
     Route::get('/dashboard/services', [ServiceController::class, 'index'])->name('dashboard.services');
+    Route::get('/dashboard/calendar', [CalendarController::class, 'index'])->name('dashboard.calendar');
     Route::get('/dashboard/shop' , [ShopController::class, 'index'])->name('dashboard.shop');
     // Add more routes as needed...  
     

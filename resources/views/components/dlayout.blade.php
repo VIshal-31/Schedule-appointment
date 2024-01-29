@@ -79,6 +79,15 @@
                         </ul></a>
                     </div>
                 </div>
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Sidebar content -->
+                        <a href="{{ route('dashboard.calendar') }}"><ul class="list-group">
+                            <li class="list-group-item">Calendar</li>
+                            <!-- Add more sidebar items -->
+                        </ul></a>
+                    </div>
+                </div>
             </div>
             <!-- Main Content Area -->
             @yield('dslot')
