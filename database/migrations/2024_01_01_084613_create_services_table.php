@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('services', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->int('time_required');
             $table->unsignedBigInteger('category_id');
             $table->timestamps();
         

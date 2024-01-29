@@ -7,7 +7,7 @@ use App\Models\Category;
 use App\Models\Service;
 use App\Models\Shop;
 use App\Models\ServiceTimeSlot;
-use App\Models\FormSubmission;
+use App\Models\Enquire;
 use App\Models\Holiday;
 
 
@@ -48,7 +48,7 @@ class DomainController extends Controller
 
     public function getPreBookedSlots($date)
     {
-    $preBookedSlots = FormSubmission::where('date', $date)
+    $preBookedSlots = Enquire::where('date', $date)
         ->pluck('time') // Assuming there is a column 'service_slot_id' in your table
         ->toArray();
 

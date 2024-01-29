@@ -9,12 +9,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DomainController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\HolidayController;
-
-
-
-
-
-
+use App\Http\Controllers\EnquireController;
 
 //views
 Route::get('/', [DomainController::class, 'index'])->name('index');
@@ -44,7 +39,7 @@ Route::get('/get-services/{category_id}', [DomainController::class, 'getServices
 Route::middleware('auth')->group(function () {
     // Route that requires authentication
     Route::match(['get', 'post'], '/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard/requests', [DashboardController::class, 'requests'])->name('dashboard.requests');
+    Route::get('/dashboard/enquire', [EnquireController::class, 'index'])->name('dashboard.enquire');
     Route::get('/dashboard/categories', [CategoryController::class, 'index'])->name('dashboard.categories');
     Route::get('/dashboard/services', [ServiceController::class, 'index'])->name('dashboard.services');
     Route::get('/dashboard/shop' , [ShopController::class, 'index'])->name('dashboard.shop');
@@ -94,4 +89,11 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/dashboard/shopholidaysfilter', [ShopController::class, 'showFilteredHolidays'])->name('dashboard.showFilteredHolidays');
     
+
+
+    // edit delete enquire
+    Route::get('/edit/{id}', [EnquireController::class, 'edit'])->name('editenquire');
+    Route::delete('/edit/{id}', [EnquireController::class, 'delete'])->name('deleteenquire');
+
+
 });

@@ -5,6 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Shop;
 use App\Models\Holiday;
+use App\Models\ServiceTimeSlot;
+use App\Models\Service;
+use Carbon\Carbon;
+
+
+
 
 
 class ShopController extends Controller
@@ -62,7 +68,6 @@ class ShopController extends Controller
             return redirect()->back()->with('error', 'Shop not found!'); // Handle the case where the shop with the given ID isn't found
         }
     }
-
     public function updateShopStartTime(Request $request)
     {
         $validatedData = $request->validate([
@@ -72,15 +77,23 @@ class ShopController extends Controller
         $shop = Shop::find(1); // Find the shop by its ID (change '1' to the required ID)
     
         if ($shop) {
+            // Delete all existing service time slots for the shop
+            ServiceTimeSlot::truncate();
+    
+            // Update shop opening time
             $shop->opening_time = $validatedData['start_time'];
             $shop->save();
-        
+    
+            // Recreate service time slots based on the new shop opening time for all services
+            $services = Service::pluck('id')->toArray();
+            $this->createServiceTimeSlots($shop, $services);
+    
             return redirect()->back()->with('success', 'Start time updated successfully!');
         } else {
             return redirect()->back()->with('error', 'Shop not found!');
         }
     }
-
+    
     public function updateShopCloseTime(Request $request)
     {
         $validatedData = $request->validate([
@@ -90,14 +103,61 @@ class ShopController extends Controller
         $shop = Shop::find(1); // Find the shop by its ID (change '1' to the required ID)
     
         if ($shop) {
+            // Delete all existing service time slots for the shop
+            ServiceTimeSlot::truncate();
+    
+            // Update shop closing time
             $shop->closing_time = $validatedData['closing_time'];
             $shop->save();
-        
-            return redirect()->back()->with('success', 'Start time updated successfully!');
+    
+            // Recreate service time slots based on the new shop closing time for all services
+            $services = Service::pluck('id')->toArray();
+            $this->createServiceTimeSlots($shop, $services);
+    
+            return redirect()->back()->with('success', 'Closing time updated successfully!');
         } else {
             return redirect()->back()->with('error', 'Shop not found!');
         }
     }
+    
+    private function createServiceTimeSlots($shop, $serviceIds)
+{
+    // Add the logic to create time slots for each service
+    foreach ($serviceIds as $serviceId) {
+        $service = Service::find($serviceId);
+
+        if ($service) {
+            $interval = $service->time_required;
+
+            // Explicitly set seconds to 0
+            $openingTime = Carbon::parse($shop->opening_time)->setSeconds(0);
+            $closingTime = Carbon::parse($shop->closing_time)->setSeconds(0);
+
+            $currentSlotStartTime = $openingTime->copy();
+
+            while ($currentSlotStartTime < $closingTime) {
+                $currentSlotEndTime = $currentSlotStartTime->copy()->addMinutes($interval);
+
+                // Ensure the end time is within the closing time
+                $currentSlotEndTime = $currentSlotEndTime->isAfter($closingTime) ? $closingTime : $currentSlotEndTime;
+
+                // Create a new service time slot only if the end time is before closing time
+                if ($currentSlotEndTime < $closingTime) {
+                    ServiceTimeSlot::create([
+                        'service_id' => $serviceId,
+                        'service_start_time' => $currentSlotStartTime->format('H:i'),
+                        'service_end_time' => $currentSlotEndTime->format('H:i'),
+                    ]);
+                }
+
+                // Move to the next slot
+                $currentSlotStartTime = $currentSlotStartTime->addMinutes($interval);
+            }
+        }
+    }
+}
+
+    
 
     public function updateDays(Request $request)
 {

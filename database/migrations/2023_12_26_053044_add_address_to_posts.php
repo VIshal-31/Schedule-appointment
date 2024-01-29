@@ -9,12 +9,16 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::table('posts', function (Blueprint $table) {
+    public function up()
+{
+    Schema::table('posts', function (Blueprint $table) {
+        // Check if 'address' column doesn't exist before adding
+        if (!Schema::hasColumn('posts', 'address')) {
             $table->string('address')->nullable();
-        });
-    }
+        }
+    });
+}
+
 
     /**
      * Reverse the migrations.

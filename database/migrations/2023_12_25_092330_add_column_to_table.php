@@ -10,12 +10,15 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up()
-    {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->string('Address')->nullable(false); // Adding a new column that is not nullable
-            // You can use other column types and options as needed
-        });
-    }
+{
+    Schema::table('posts', function (Blueprint $table) {
+        // Check if 'Address' column doesn't exist before adding
+        if (!Schema::hasColumn('posts', 'Address')) {
+            $table->string('Address')->nullable();
+        }
+    });
+}
+
 
     public function down()
     {

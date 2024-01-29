@@ -119,38 +119,80 @@ class ServiceController extends Controller
 
     }
 
-    public function update(Request $request, Service $service)
-    {
-        // Validate and update the service
-        try {
-            $validatedData = $request->validate([
-                'category_id' => 'required|exists:categories,id',
-                'name' => [
-                    'required',
-                    Rule::unique('services')->where(function ($query) use ($request, $service) {
-                        return $query->where('category_id', $request->category_id)->where('id', '!=', $service->id);
-                    }),
-                ],
-                // Other validation rules
-                'timerequired' => 'required|numeric',
+ 
+
+   
+
+    public function update(Request $request, $id)
+{
+    try {
+        // Fetch the service you want to update
+        $service = Service::findOrFail($id);
+
+        // Validate form data
+        $validatedData = $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'name' => [
+                'required',
+                Rule::unique('services')->where(function ($query) use ($request, $id) {
+                    return $query->where('category_id', $request->category_id)->whereNotIn('id', [$id]);
+                }),
+            ],
+            'timerequired' => 'required|numeric',
+            // Other validation rules
+        ]);
+
+        // Update service details
+        $service->update([
+            'category_id' => $validatedData['category_id'],
+            'name' => $validatedData['name'],
+            'time_required' => $validatedData['timerequired'],
+            // Update other fields as necessary
+        ]);
+
+        // Update service time slots
+        $shop = Shop::find(1); // Assuming the shop you want has id = 1
+        $shopStartTime = Carbon::createFromFormat('H:i:s', $shop->opening_time);
+        $shopEndTime = Carbon::createFromFormat('H:i:s', $shop->closing_time);
+
+        $interval = $validatedData['timerequired'];
+        $currentSlotStartTime = $shopStartTime;
+        $endtime = $shopStartTime->copy()->addMinutes($interval)->format('H:i');
+
+        // Delete existing service time slots for the updated service
+        ServiceTimeSlot::where('service_id', $service->id)->delete();
+
+        // Recreate service time slots based on the updated time requirements
+        while ($endtime <= $shopEndTime) {
+            $currentSlotEndTime = $currentSlotStartTime->copy()->addMinutes($interval);
+            // Create a new service time slot
+            ServiceTimeSlot::create([
+                'service_id' => $service->id,
+                'service_start_time' => $currentSlotStartTime->format('H:i'), // Format as 'H:i'
+                'service_end_time' => $currentSlotEndTime->format('H:i'), // Format as 'H:i'
             ]);
 
-            $service->update([
-                'category_id' => $validatedData['category_id'],
-                'name' => $validatedData['name'],
-                'time_required' => $validatedData['timerequired'],
-
-                // Other fields as necessary
-            ]);
-           
-            // Redirect back with success message if needed
-            return redirect()->route('dashboard.services')->with('success', 'Service updated successfully');
-        } catch (ValidationException $e) {
-            // Redirect back with errors if validation fails
-            return redirect()->back()->withErrors($e->validator->errors())->withInput();
+            // Move to the next slot
+            $currentSlotStartTime = $currentSlotEndTime;
+            $endtime = $currentSlotEndTime->copy()->addMinutes($interval);
         }
-    }
 
+        return redirect()->route('dashboard.services')->with('success', 'Service updated successfully');
+
+    } catch (ModelNotFoundException $e) {
+        return redirect()->back()->withErrors(['timerequired' => 'Service not found.'])->withInput();
+    } catch (ValidationException $e) {
+        // Redirect back with errors if validation fails
+        return redirect()->back()->withErrors($e->validator->errors())->withInput();
+    }
+}
+
+    
+    public function timeSlots()
+    {
+        return $this->hasMany(ServiceTimeSlot::class);
+    }
+    
     public function confirmDelete(Service $service)
     {
         // Show the confirmation page before deleting the service

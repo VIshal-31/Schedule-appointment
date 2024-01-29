@@ -126,7 +126,7 @@
             @endphp
 
             @foreach($allDays as $day)
-                 @php
+            @php
             $isDayPresent = in_array($day, $workingDays);
             $backgroundColor = $isDayPresent ? '#3b3a3a' : '#EE4B2B' ;
             @endphp
@@ -184,7 +184,7 @@
                     </div>
                     <div class="checkbox-container m-2 " >
                         <div>
-                        <input style="display:none;" value="Sunday" name="days[]" type="checkbox" id="myCheckbox7" class="ratio ratio-1x1 text-light">
+                        <input style="display:none;" value="Sun" name="days[]" type="checkbox" id="myCheckbox7" class="ratio ratio-1x1 text-light">
                         <label for="myCheckbox7" id="my" style="display: flex; align-items: center; justify-content: center;">Sun</label>
                         </div>
                     </div>

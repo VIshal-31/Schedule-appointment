@@ -46,8 +46,8 @@
                 <div class="card">
                     <div class="card-body">
                         <!-- Sidebar content -->
-                        <a href="{{ route('dashboard.requests') }}"><ul class="list-group">
-                            <li class="list-group-item">New Request</li>
+                        <a href="{{ route('dashboard.enquire') }}"><ul class="list-group">
+                            <li class="list-group-item">New Enquire</li>
                             <!-- Add more sidebar items -->
                         </ul></a>
                     </div>

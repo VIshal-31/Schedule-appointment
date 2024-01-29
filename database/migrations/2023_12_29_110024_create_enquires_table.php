@@ -18,7 +18,7 @@ return new class extends Migration
         $table->string('category');
         $table->string('service');
         $table->date('date');
-        $table->time('time');
+        $table->int('time');
         $table->text('message');
         $table->timestamps();
     });

@@ -1,15 +1,12 @@
-@extends('components.layout')
+@extends('components.dlayout')
 
-@section('title', 'Home')
+@section('title1', 'Requests | Dashboard')
 
-@section('slot')
+@section('dslot')
 
 
-<div class="container my-4">
-  <div class="d-flex align-items-center justify-content-center m-4"><h1><b>{{ $shop->name }}</b></h1></div>
-  <hr>
-  <div class="row mx-0 my-4"><h3 class="col">Book Your Appoitment Now</h3><h4>Opening Time : {{ $shop->opening_time }} - Closing Time : {{ $shop->closing_time }}</h4></div>
-  @if(session('success'))
+<div class="col-md-9">
+@if(session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
     </div>
@@ -24,31 +21,37 @@
     </div>
   @endif
 
+
+
   <form action="{{ route('submit.form') }}" method="POST">
     <!-- Form fields -->
     @csrf
     <div class="form-group">
       <label for="name"><b>Name:</b></label>
-      <input type="text" class="form-control" name="name" id="name" placeholder="Enter your name">
+      <input type="text" value="{{ $enquiry->name }}" class="form-control" name="name" id="name" placeholder="Enter your name" readonly>
     </div>
     <div class="form-group">
       <label for="email"><b>Email:</b></label>
-      <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email">
+      <input type="email" value="{{ $enquiry->email }}" class="form-control" name="email" id="email" placeholder="Enter your email" readonly>
     </div>
     <div class="form-group">
       <label for="category"><b>Category:</b></label>
-      <select class="form-control" id="category" name="category">
+      <select class="form-control" id="category" name="category" disabled>
         <option value="">Please Select Category</option>
         @foreach ($categories as $category)
-        <option id="{{ $category->id }}" value="{{ $category->name }}">{{ $category->name }}</option>
+        <option id="{{ $category->id }}" value="{{ $category->name }}" {{ $enquiry->category === $category->name ? 'selected' : '' }}>{{ $category->name }}</option>
        @endforeach
       </select>
     </div>
 
     <div class="form-group">
       <label for="service"><b>Service:</b></label>
-      <select class="form-control" id="service" name="service">
-        <option value="">Select service</option>
+      <select class="form-control" id="service" name="service" disabled>
+        @foreach ($services as $service) <!-- Change $service to $services -->
+          <option id="{{ $service->id }}" value="{{ $service->id }}" {{ $enquiry->service == $service->id ? 'selected' : '' }} >
+            {{ $service->name }}
+          </option>
+        @endforeach
       </select>
     </div>
     
@@ -97,7 +100,7 @@
                     $('#service').empty();
                     $('#service').append('<option value="">Select service</option>');
                     $.each(data, function(key, value) {
-                        $('#service').append('<option value="' + value.id + '">' + value.name + '</option>');
+                        $('#service').append('<option value="' + value.id + '" >' + value.name + '</option>');
                     });
                 }
             });
@@ -288,6 +291,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 day.classList.add('holiday');
             }
 
+            // Set default selected date
+const defaultDate = '{{ $enquiry->date }}';
+if (i === parseInt(defaultDate.split('-')[2])) {
+    day.classList.add('selected');
+    day.classList.remove('disabled', 'holiday');
+    document.getElementById('date').value = defaultDate;
+    
+    fetchPreBookedServiceSlots(defaultDate);
+}
+
             calendarDays.appendChild(day);
         }
     }
@@ -377,5 +390,5 @@ function updateDisabledTimeSlots(preBookedSlots) {
             console.log('Event Date:', '{{ $holiday->event_date }}');
         </script>
     @endforeach
+      
 @endsection
-
