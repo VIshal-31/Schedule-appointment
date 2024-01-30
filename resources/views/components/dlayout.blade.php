@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>@yield('title1', 'Default Title')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+   
     <!-- Bootstrap CSS -->
     <link rel="icon" href="{{ asset('favicon.png') }}" type="image/x-icon">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -13,10 +16,17 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Chart.js (if using charts) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+
+
+    
 </head>
 <body style="padding-bottom:12vh;">
 
@@ -97,7 +107,5 @@
 
     <div class="bg-dark col-12 m-0 p-0 fixed-bottom d-flex align-items-center justify-content-center" style="height:5vh;"><a class="text-light" href="https://webwideit.solutions/" target="_blank">Webwide It Solutions</a></div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -46,6 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/categories', [CategoryController::class, 'index'])->name('dashboard.categories');
     Route::get('/dashboard/services', [ServiceController::class, 'index'])->name('dashboard.services');
     Route::get('/dashboard/calendar', [CalendarController::class, 'index'])->name('dashboard.calendar');
+    Route::get('/dashboard/calendar/getevent', [CalendarController::class, 'getevent'])->name('dashboard.getevent');
     Route::get('/dashboard/shop' , [ShopController::class, 'index'])->name('dashboard.shop');
     // Add more routes as needed...  
     
@@ -96,7 +97,7 @@ Route::middleware('auth')->group(function () {
 
 
     // edit delete enquire
-    Route::get('/edit/{id}', [EnquireController::class, 'edit'])->name('editenquire');
+    Route::get('/dashboard/enquire/edit/{id}', [EnquireController::class, 'edit'])->name('editenquire');
     Route::delete('/edit/{id}', [EnquireController::class, 'delete'])->name('deleteenquire');
 
 
