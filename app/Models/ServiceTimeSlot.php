@@ -16,6 +16,8 @@ class ServiceTimeSlot extends Model
         'timestamp',
         'service_slot_status',
         'quantity',
+        'activity_status',
+        'day',
     ];
 
     // Define the relationship with Service

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Service;
+use App\Models\Schedule;
 use App\Models\ServiceTimeSlot;
 use App\Models\Shop;
 use Illuminate\Http\Request;
@@ -24,86 +25,114 @@ class ServiceController extends Controller
 
     public function store(Request $request)
     {
-        try {
+    try {
 
-            $shop = Shop::find(1); // Assuming the shop you want has id = 1
-            $shopStartTime = Carbon::createFromFormat('H:i:s', $shop->opening_time); // Convert to Carbon
-            $shopEndTime = Carbon::createFromFormat('H:i:s', $shop->closing_time); // Convert to Carbon   
+        $validatedData = $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'name' => [
+                'required',
+                Rule::unique('services')->where(function ($query) use ($request) {
+                    return $query->where('category_id', $request->category_id);
+                }),
+            ],
+            'timerequired' => 'required|numeric',
+            // Other validation rules
+        ]);
+
+        // Create the service
+        $service = Service::create([
+            'category_id' => $validatedData['category_id'],
+            'name' => $validatedData['name'],
+            'time_required' => $validatedData['timerequired'],
             
+            
+            // Other fields as necessary
+        ]);
+
+        // Loop through schedules from ID 1 to 7
+        for ($scheduleId = 1; $scheduleId <= 7; $scheduleId++) {
+            
+            $schedule = Schedule::find($scheduleId);
+            
+            $shopStartTime = Carbon::createFromFormat('H:i:s', $schedule->first_slot_start_time); // Convert to Carbon
+            $shopEndTime = Carbon::createFromFormat('H:i:s', $schedule->first_slot_end_time); // Convert to Carbon   
+            $days = $schedule->day ;
+            $activity_statuss = $schedule->activity_status ;
             // data from form
-            $validatedData = $request->validate([
-                'category_id' => 'required|exists:categories,id',
-                'name' => [
-                            'required',
-                            Rule::unique('services')->where(function ($query) use ($request) {
-                            return $query->where('category_id', $request->category_id);
-                            }),
-                        ],
-                'timerequired' => 'required|numeric',
-                // Other validation rules
-            ]);
 
             // Validate service start time and end time
             $serviceStartTime = $shopStartTime;
             $serviceEndTime = $serviceStartTime->copy()->addMinutes($validatedData['timerequired']);
- 
     
-            if (!$shop || !$shop->opening_time || !$shop->closing_time) {
-                // Shop not found or missing start/end time
-                return redirect()->back()->withErrors(['timerequired' => 'Unable to fetch shop details. Shop data may be missing.'])->withInput();
+            if (!$schedule || !$schedule->first_slot_start_time || !$schedule->first_slot_end_time) {
+                // Schedule not found or missing start/end time
+                return redirect()->back()->withErrors(['timerequired' => 'Unable to fetch schedule details. Schedule data may be missing.'])->withInput();
             }
     
-   
-            else if ($serviceStartTime > $shopStartTime || $serviceEndTime < $shopEndTime) {
-
-                // Create the service
-                $service = Service::create([
-                    'category_id' => $validatedData['category_id'],
-                    'name' => $validatedData['name'],
-                    'time_required' => $validatedData['timerequired'],
-                    // Other fields as necessary
-                ]);
-        
+            if ( $serviceEndTime < $shopEndTime) {
+    
                 // Create service time slots
                 $interval = $validatedData['timerequired'];
                 $currentSlotStartTime = $shopStartTime;
                 $endtime = $shopStartTime->copy()->addMinutes($interval)->format('H:i');
     
-                    
                 while ($endtime <= $shopEndTime) {
-
+    
                     $currentSlotEndTime = $currentSlotStartTime->copy()->addMinutes($interval);
                     // Create a new service time slot
                     ServiceTimeSlot::create([
                         'service_id' => $service->id,
                         'service_start_time' => $currentSlotStartTime->format('H:i'), // Format as 'H:i'
                         'service_end_time' => $currentSlotEndTime->format('H:i'), // Format as 'H:i'
+                        'day' => $days,
+                        'activity_status' => $activity_statuss,
                     ]);
-                
+    
                     // Move to the next slot
                     $currentSlotStartTime = $currentSlotEndTime;
-                    $endtime = $currentSlotEndTime->copy()->addMinutes($interval); 
+                    $endtime = $currentSlotEndTime->copy()->addMinutes($interval);
                 }
 
+
+                $secondshopStartTime = Carbon::createFromFormat('H:i:s', $schedule->second_slot_start_time); // Convert to Carbon
+                $secondshopEndTime = Carbon::createFromFormat('H:i:s', $schedule->second_slot_end_time); // Convert to Carbon   
+    
+                $secondserviceEndTime = $serviceStartTime->copy()->addMinutes($validatedData['timerequired']);
+
+                $interval = $validatedData['timerequired'];
+                $secondcurrentSlotStartTime = $secondshopStartTime;
+                $secondendtime = $secondshopStartTime->copy()->addMinutes($interval)->format('H:i');
+
+                while ($secondendtime <= $secondshopEndTime) {
+    
+                    $secondcurrentSlotEndTime = $secondcurrentSlotStartTime->copy()->addMinutes($interval);
+                    // Create a new service time slot
+                    ServiceTimeSlot::create([
+                        'service_id' => $service->id,
+                        'service_start_time' => $secondcurrentSlotStartTime->format('H:i'), // Format as 'H:i'
+                        'service_end_time' => $secondcurrentSlotEndTime->format('H:i'), // Format as 'H:i'
+                        'day' => $days,
+                        'activity_status' => $activity_statuss,
+                    ]);
+    
+                    // Move to the next slot
+                    $secondcurrentSlotStartTime = $secondcurrentSlotEndTime;
+                    $secondendtime = $secondcurrentSlotEndTime->copy()->addMinutes($interval);
+                }
+            }
+        }
                 // Redirect back with success message if needed
                 return redirect()->back()->with('success', 'Service added successfully');
-                    
-            }
-
-            else{
-                // Service time is not within the shop's operating hours
-                return redirect()->back()->withErrors(['timerequired' => 'Service time should be within shop hours.'])->withInput();
-            }
     
-            
+             
+        
+    
         } catch (ValidationException $e) {
             // Redirect back with errors if validation fails
             return redirect()->back()->withErrors($e->validator->errors())->withInput();
         }
     }
-
-
-
+    
 
     public function show(Service $Service)
     {
@@ -152,8 +181,8 @@ class ServiceController extends Controller
 
         // Update service time slots
         $shop = Shop::find(1); // Assuming the shop you want has id = 1
-        $shopStartTime = Carbon::createFromFormat('H:i:s', $shop->opening_time);
-        $shopEndTime = Carbon::createFromFormat('H:i:s', $shop->closing_time);
+        $shopStartTime = Carbon::createFromFormat('H:i:s', $shop->first_slot_start_time);
+        $shopEndTime = Carbon::createFromFormat('H:i:s', $shop->first_slot_end_time);
 
         $interval = $validatedData['timerequired'];
         $currentSlotStartTime = $shopStartTime;
@@ -211,10 +240,3 @@ class ServiceController extends Controller
         return response()->json($services);
     }
 }
-
-
-
-
-
-
-

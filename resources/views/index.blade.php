@@ -266,7 +266,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             day.innerText = i;
 
-            if (!workingDays.includes(currentDay) || isPastDate) {
+            if (!workingDays.includes(currentDay) || isPastDate || isHoliday) {
                 day.classList.add('disabled', 'holiday');
             } else {
                 day.addEventListener('click', function () {
@@ -285,7 +285,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             if (isHoliday && currentDate.toISOString().split('T')[0] !== today.toISOString().split('T')[0]) {
-                day.classList.add('holiday');
+                day.classList.add('disabled','holiday');
             }
 
             calendarDays.appendChild(day);

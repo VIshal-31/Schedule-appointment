@@ -14,6 +14,7 @@ use App\Http\Controllers\CalendarController;
 
 
 
+
 //views
 Route::get('/', [DomainController::class, 'index'])->name('index');
 Route::get('/aboutus', function () {return view('aboutus');});
@@ -93,7 +94,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/holidays', [HolidayController::class, 'store'])->name('holidays.store');
 
     Route::post('/dashboard/shopholidaysfilter', [ShopController::class, 'showFilteredHolidays'])->name('dashboard.showFilteredHolidays');
-    
+        
 
 
     // edit delete enquire
@@ -101,4 +102,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/edit/{id}', [EnquireController::class, 'delete'])->name('deleteenquire');
 
 
+    // timeslot
+    Route::put('/dashboard/shop/{id}', [ShopController::class, 'update'])->name('schedule.update');
 });

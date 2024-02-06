@@ -32,7 +32,7 @@
   color: #fff;
 }
 
-  </style>  
+</style>  
 
 <div class="card col-md-9">
 <div class="mb-5">
@@ -62,14 +62,65 @@
         <h1 class="col m-0">
         <form class="row" id="shopForm" action="{{ route('update.shop.name') }}" method="post">
             @csrf
-            <input class="col-5" type="text" id="shopName" name="name" placeholder="{{ $shop->name }}">
+            <input class="col-5" type="text" id="shopName" name="name" placeholder="Enter Shop Name">
             <button type="submit" id="saveshopname" class="mx-1 col-2 text-light btn px-4 border-0 rounded-0 bg-success d-flex align-items-center justify-contet-center"><i class="bi bi-floppy2-fill p-2"></i>Save</button>
         </form>
         </div>
         
     </div>
-    <div class="row my-3">
 
+    <div>
+        <table>
+            <thead style="border-bottom:2px solid black">
+                <tr>
+                    <th class="col-1">ID</th>
+                    <th class="col-1">Day</th>
+                    <th class="col-2">First Slot Start Time</th>
+                    <th class="col-2">First Slot End Time</th>
+                    <th class="col-2">Second Slot Start Time</th>
+                    <th class="col-2">Second Slot End Time</th>
+                    <th class="col-1">Activity Status</th>
+                    <th class="col-2">Action</th>
+                </tr>
+            </thead>
+        @foreach ($schedule as $row)
+        <tbody style="border-bottom:1px solid black">   
+            <tr>
+            <form action="{{ route('schedule.update', $row->id) }}" method="post">
+                        @csrf
+                        @method('put')
+                <td class="col-1">{{ $row->id }}</td>
+                <td class="col-2">
+                 <input style="width: 50%;" type="text" name="day" value="{{ $row->day }}" readonly>
+                </td>
+                <td class="col-2">
+                    <input type="time" name="firstslotstarttime" value="{{ $row->first_slot_start_time }}" />
+                </td>
+                <td class="col-2">
+                    <input type="time" name="firstslotendtime" value="{{ $row->first_slot_end_time }}" />
+                </td>
+                <td class="col-2">
+                    <input type="time" name="secondslotstarttime" value="{{ $row->second_slot_start_time }}" />
+                </td>
+                <td class="col-2">
+                    <input type="time" name="secondslotendtime" value="{{ $row->second_slot_end_time }}" />
+                </td>
+                <td class="col-1 toggle-switch">
+                    <input type="hidden" name="activity_status" value="inactive"> <!-- Hidden field for inactive value -->
+                    <input type="checkbox" id="activityToggle{{ $row->id }}" name="activity_status" value="active" {{ $row->activity_status === 'active' ? 'checked' : '' }}>
+                    <label for="activityToggle{{ $row->id }}"></label>   
+                </td>
+                <td class="col-2">
+                        <button class="btn bg-info text-light" type="submit">Update</button>
+                    </form>
+                </td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
+    </div>
+
+    <div class="row my-3">
     <!-- Opening time -->
         <div class="col-6">
             <div class="col-10">
@@ -579,11 +630,59 @@
     
 </script>
 
-<!-- Change shop name -->
 
 
+
+
+<!-- toggle button style -->
+<style>
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+        margin: 15px 0px;
+        padding: 0px 15px;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .toggle-switch label {
+        background-color: #ccc;
+        border-radius: 34px;
+        display: block;
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        width: 60px;
+        height: 34px;
+    }
+
+    .toggle-switch label:after {
+        content: '';
+        border-radius: 50%;
+        background-color: #fff;
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 30px;
+        height: 30px;
+        transition: 0.3s;
+    }
+
+    .toggle-switch input:checked + label {
+        background-color: #4CAF50;
+    }
+
+    .toggle-switch input:checked + label:after {
+        transform: translateX(26px);
+    }
+</style>
 
 
 @endsection
-
-

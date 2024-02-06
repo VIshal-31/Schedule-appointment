@@ -17,9 +17,11 @@ return new class extends Migration
             $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
             $table->Time('service_start_time');
             $table->Time('service_end_time');
-            $table->timestamps();
+            $table->string('day');
             $table->string('service_slot_status')->nullable();
             $table->integer('quantity')->default(1);
+            $table->enum('activity_status', ['active', 'inactive'])->default('active');
+            $table->timestamps();
         });
     }
 

@@ -7,10 +7,8 @@ use App\Models\Shop;
 use App\Models\Holiday;
 use App\Models\ServiceTimeSlot;
 use App\Models\Service;
+use App\Models\Schedule;
 use Carbon\Carbon;
-
-
-
 
 
 class ShopController extends Controller
@@ -19,18 +17,61 @@ class ShopController extends Controller
     {
         // Fetch the shop with ID 1, assuming the ID is 1
         $shop = Shop::find(1);
-
         // Extract the working days from the comma-separated string
         $workingDays = explode(',', $shop->working_days);
-
         // Retrieve all holidays
         $holidays = Holiday::all();
+        $schedule = schedule::all();
 
         return view('dashboard.shop.index', [
             'shop' => $shop,
             'workingDays' => $workingDays,
             'holidays' => $holidays,
+            'schedule' => $schedule,
+
         ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+
+        $validatedData = $request->validate([
+
+            'firstslotstarttime' => 'required',
+            'firstslotendtime' => 'required',
+            'secondslotstarttime' => 'required',
+            'secondslotendtime' => 'required',
+            'activity_status' => 'required',
+            'day' => 'required',
+
+        ]);
+
+        $day = $validatedData['day'];
+    
+        $schedule = Schedule::find($id); // Find the shop by its ID (change '1' to the required ID)
+    
+        if ($schedule) {
+            // Delete all existing service time slots for the shop
+            ServiceTimeSlot::where('day', $day)->delete();
+    
+            // Update shop opening time
+            $schedule->first_slot_start_time = $validatedData['firstslotstarttime'];
+            $schedule->first_slot_end_time = $validatedData['firstslotendtime'];
+            $schedule->second_slot_start_time = $validatedData['secondslotstarttime'];
+            $schedule->second_slot_end_time = $validatedData['secondslotendtime'];
+            $schedule->activity_status = $validatedData['activity_status'];
+            $schedule->day = $validatedData['day'];
+            $schedule->save();
+    
+            // Recreate service time slots based on the new shop opening time for all services
+            $services = Service::pluck('id')->toArray();
+            $this->createServiceTimeSlots1($schedule, $services);
+    
+            return redirect()->route('dashboard.shop')->with('success', 'Schedule updated successfully');
+
+        } else {
+            return redirect()->back()->with('error', 'Shop not found!');
+        }
     }
 
     public function saveShop(Request $request)
@@ -68,6 +109,7 @@ class ShopController extends Controller
             return redirect()->back()->with('error', 'Shop not found!'); // Handle the case where the shop with the given ID isn't found
         }
     }
+
     public function updateShopStartTime(Request $request)
     {
         $validatedData = $request->validate([
@@ -94,6 +136,75 @@ class ShopController extends Controller
         }
     }
     
+
+    private function createServiceTimeSlots1($schedule, $serviceIds)
+    {
+    // Add the logic to create time slots for each service
+    foreach ($serviceIds as $serviceId) {
+        $service = Service::find($serviceId);
+
+        if ($service) {
+            $interval = $service->time_required;
+                
+            // Explicitly set seconds to 0
+            $firstopeningTime = Carbon::parse($schedule->first_slot_start_time)->setSeconds(0);
+            $firstclosingTime = Carbon::parse($schedule->first_slot_end_time)->setSeconds(0);
+            $secondopeningTime = Carbon::parse($schedule->second_slot_start_time)->setSeconds(0);
+            $secondclosingTime = Carbon::parse($schedule->second_slot_end_time)->setSeconds(0);
+            
+            $days = $schedule->day;
+            $activitystatuss = $schedule->activity_status;
+            
+
+            $currentSlotStartTime = $firstopeningTime->copy();
+
+            while ($currentSlotStartTime < $firstclosingTime) {
+                $currentSlotEndTime = $currentSlotStartTime->copy()->addMinutes($interval);
+
+                // Ensure the end time is within the closing time
+                $currentSlotEndTime = $currentSlotEndTime->isAfter($firstclosingTime) ? $firstclosingTime : $currentSlotEndTime;
+
+                // Create a new service time slot only if the end time is before closing time
+                if ($currentSlotEndTime < $firstclosingTime) {
+                    ServiceTimeSlot::create([
+                        'service_id' => $serviceId,
+                        'service_start_time' => $currentSlotStartTime->format('H:i'),
+                        'service_end_time' => $currentSlotEndTime->format('H:i'),
+                        'day' => $days,
+                        'activity_status' => $activitystatuss,  
+                    ]);
+                }
+
+                // Move to the next slot
+                $currentSlotStartTime = $currentSlotStartTime->addMinutes($interval);
+            }
+
+            $currentSlotStartTime = $secondopeningTime->copy();
+
+            while ($currentSlotStartTime < $secondclosingTime) {
+                $currentSlotEndTime = $currentSlotStartTime->copy()->addMinutes($interval);
+
+                // Ensure the end time is within the closing time
+                $currentSlotEndTime = $currentSlotEndTime->isAfter($secondclosingTime) ? $secondclosingTime : $currentSlotEndTime;
+
+                // Create a new service time slot only if the end time is before closing time
+                if ($currentSlotEndTime < $secondclosingTime) {
+                    ServiceTimeSlot::create([
+                        'service_id' => $serviceId,
+                        'service_start_time' => $currentSlotStartTime->format('H:i'),
+                        'service_end_time' => $currentSlotEndTime->format('H:i'),
+                        'day' => $days,
+                        'activity_status' => $activitystatuss,
+                    ]);
+                }
+
+                // Move to the next slot
+                $currentSlotStartTime = $currentSlotStartTime->addMinutes($interval);
+            }
+        }
+    }
+}
+
     public function updateShopCloseTime(Request $request)
     {
         $validatedData = $request->validate([
@@ -121,7 +232,7 @@ class ShopController extends Controller
     }
     
     private function createServiceTimeSlots($shop, $serviceIds)
-{
+    {
     // Add the logic to create time slots for each service
     foreach ($serviceIds as $serviceId) {
         $service = Service::find($serviceId);
@@ -147,6 +258,7 @@ class ShopController extends Controller
                         'service_id' => $serviceId,
                         'service_start_time' => $currentSlotStartTime->format('H:i'),
                         'service_end_time' => $currentSlotEndTime->format('H:i'),
+                        'day' => $day,
                     ]);
                 }
 
