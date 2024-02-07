@@ -3,9 +3,15 @@
 @section('title1', 'Requests | Dashboard')
 
 @section('dslot')
-
+<style>
+        #loadingMessage {
+            display: none;
+        }
+    </style>
 
 <div class="col-md-9">
+
+<div id="loadingMessage">Data Loading...</div>
 @if(session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
@@ -23,7 +29,7 @@
 
 
 
-  <form action="{{ route('submit.form') }}" method="POST">
+  <form action="{{ route('update.enquiry', ['id' => $enquiry->id]) }}" method="POST">
     <!-- Form fields -->
     @csrf
     <div class="form-group">
@@ -85,6 +91,16 @@
       <label for="message"><b>Message:</b></label>
       <textarea class="form-control" id="message" name="message" rows="3" placeholder="Enter your message">{{ $enquiry->message }}</textarea>
     </div>
+    <div class="form-group">
+      <label for="status"><b>Status:</b></label>
+      <select class="form-control" id="status" name="status">
+          <option value="">Please Select status</option>
+          <option value="New" {{ $enquiry->Status == 'New' ? 'selected' : '' }}>New</option>
+          <option value="Confirm" {{ $enquiry->Status == 'Confirm' ? 'selected' : '' }}>Confirm</option>
+          <option value="Cancel" {{ $enquiry->Status == 'Cancel' ? 'selected' : '' }}>Cancel</option>
+          <option value="Done" {{ $enquiry->Status == 'Done' ? 'selected' : '' }}>Done</option>
+      </select>
+    </div>
     <button type="submit" class="btn btn-primary border-0 py-3 px-5" style="background-color:#0000FF;">Submit</button>
   </form>
   
@@ -106,7 +122,7 @@
                     $('#service').empty();
                     $('#service').append('<option value="">Select service</option>');
                     $.each(data, function(key, value) {
-                        $('#service').append('<option value="' + value.id + '" >' + value.name + '</option>');
+                        $('#service').append('<option value="' + value.id + '">' + value.name + '</option>');
                     });
                 }
             });
@@ -118,22 +134,12 @@
 
     // Handle service change separately
     $('#service').change(function() {
-    var serviceId = $(this).val();
-
-  
+    
+      var serviceId = $(this).val();
         // Clear the date field when the service changes
         $('.day.selected').removeClass('selected');
 
-    if (serviceId) {
-        $.ajax({
-            type: "GET",
-            url: "/get-time-slots/" + serviceId,
-            success: function(data) {
-            console.table(data); // Log the received data in a tabular format
-            updateTimeSlots(data);
-            }
-        });
-    }
+
 });
 });
 
@@ -226,7 +232,31 @@ function updateTimeSlots(timeSlots) {
   
  <!-- Calendar JS -->
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+
+// get getServiceId
+function getServiceId() {
+    // Replace 'serviceId' with the actual ID of your input field
+    const serviceId = $('#service').val();
+    return serviceId;
+}
+
+  // get time slot 
+  function fetchTimeSlots(serviceId, dayName) {
+        $.ajax({
+            type: "GET",
+            url: "/get-time-slots/" + serviceId + "/" + dayName,
+            success: function(data) {
+                console.table(data);
+                updateTimeSlots(data);
+            },
+            error: function(err) {
+                console.error("Error fetching time slots:", err);
+            }
+        });
+    }
+
+
+  document.addEventListener("DOMContentLoaded", function () {
     const today = new Date();
     let currentMonth = today.getMonth();
     let currentYear = today.getFullYear();
@@ -298,14 +328,38 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             // Set default selected date
-const defaultDate = '{{ $enquiry->date }}';
-if (i === parseInt(defaultDate.split('-')[2])) {
-    day.classList.add('selected');
-    day.classList.remove('disabled', 'holiday');
-    document.getElementById('date').value = defaultDate;
-    
-    fetchPreBookedServiceSlots(defaultDate);
-}
+        const defaultDate = '{{ $enquiry->date }}';
+          if (i === parseInt(defaultDate.split('-')[2])) {
+              day.classList.add('selected');
+              day.classList.remove('disabled', 'holiday');
+              document.getElementById('date').value = defaultDate;
+
+              fetchPreBookedServiceSlots(defaultDate);
+          }
+          
+          const serviceId = getServiceId();
+          console.log("Service ID:", serviceId);
+          const dayName = currentDay.toLowerCase();
+          console.log("Service ID:", dayName);
+
+          fetchTimeSlots(serviceId, dayName);
+
+          const defaulttimeslot = '{{ $enquiry->time }}';
+          
+          function selectRadioButton(defaulttimeslot) {
+              var radioToSelect = document.getElementById(defaulttimeslot);
+          
+              if (radioToSelect) {
+                  // Set the 'checked' property to true
+                  radioToSelect.checked = true;
+              }
+          }
+
+        // Use setTimeout to add a delay before calling selectRadioButton
+        setTimeout(function () {
+            selectRadioButton(defaulttimeslot);
+        }, 1000);
+
 
             calendarDays.appendChild(day);
         }
@@ -314,6 +368,8 @@ if (i === parseInt(defaultDate.split('-')[2])) {
     renderCalendar();
 
     document.getElementById('previousmonth').addEventListener('click', function () {
+
+      
     currentMonth = (currentMonth - 1 + 12) % 12; // Ensure positive modulo
 
     // Update currentYear based on the change in currentMonth
@@ -322,9 +378,13 @@ if (i === parseInt(defaultDate.split('-')[2])) {
     }
 
     renderCalendar();
+    $('.day.selected').removeClass('selected');
+    
 });
 
 document.getElementById('nextmonth').addEventListener('click', function () {
+
+  $('.day.selected').removeClass('selected');
     currentMonth = (currentMonth + 1) % 12;
 
     // Update currentYear based on the change in currentMonth
@@ -333,6 +393,8 @@ document.getElementById('nextmonth').addEventListener('click', function () {
     }
 
     renderCalendar();
+    $('.day.selected').removeClass('selected');
+
 });
 });
 
@@ -391,10 +453,12 @@ function updateDisabledTimeSlots(preBookedSlots) {
     }
 </style>
 
-@foreach($holidays as $holiday)
+    @foreach($holidays as $holiday)
         <script>
-            console.log('Event Date:', '{{ $holiday->event_date }} + {{ $enquiry->date }}');
+            console.log('Event Date:', '{{ $holiday->event_date }}');
         </script>
     @endforeach
-      
+
 @endsection
+
+

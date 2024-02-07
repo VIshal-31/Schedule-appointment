@@ -31,6 +31,8 @@ Route::get('/get-pre-booked-slots/{date}', [DomainController::class, 'getPreBook
 
 // Appoitment Form
 Route::post('/submit-form', [PostController::class, 'Enquire'])->name('submit.form');
+Route::post('/enquiries/update/{id}', [PostController::class, 'updateEnquiry'])->name('update.enquiry');
+
 
 // login method
 Route::post('/login', [LoginController::class, 'login']);

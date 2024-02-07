@@ -52,11 +52,13 @@
             eventRender: function (event, element) {
                 // Customize event rendering based on status
                 if (event.status === 'New') {
-                    element.css('background-color', 'blue');
+                    element.css('background-color', '#52D3F6');
                 } else if (event.status === 'Confirm') {
-                    element.css('background-color', 'green');
+                    element.css('background-color', 'gray');
                 } else if (event.status === 'Canceled') {
                     element.css('background-color', 'red');
+                }else if (event.status === 'Done') {
+                    element.css('background-color', 'green');
                 }
 
                 // Display additional data in the tooltip

@@ -75,5 +75,40 @@ class PostController extends Controller
         }
 
 
+    public function updateEnquiry(Request $request, $id)
+        {
+            $formData = $request->validate([
+                'name' => 'required|string',
+                'email' => 'required|email',
+                'contact' => 'required',
+                'category' => 'required|string',
+                'service' => 'required|string',
+                'date' => 'required|date',
+                'time' => 'required',
+                'message' => 'required|string',
+                'status' => 'required', 
+            ]);
+        
+            // Find the existing record by ID
+            $enquiry = Enquire::findOrFail($id);
+        
+            // Update the record with new data
+            $enquiry->update($formData);
+        
+            // Get the user's email and name from the request
+            $userEmail = $request->input('email');
+            $userName = $request->input('name');
+        
+            // Set the admin email address (replace with the actual admin email)
+            $adminEmail = 'vishal@webwideit.solutions';
+        
+            // Send the email to the user
+            Mail::to($userEmail)->send(new UserFormSubmitMail($userEmail, $userName));
+        
+            // Send a separate email to the admin
+            Mail::to($adminEmail)->send(new AdminFormSubmitMail($adminEmail, $userName));
+        
+            return back()->with('success', 'Data Submitted !!!');
+        }
 
 }
