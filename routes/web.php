@@ -24,7 +24,7 @@ Route::get('/posts/create1', [PostController::class, 'create'])->name('posts.cre
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('registerview');
 
 // get data in form 
-Route::get('/get-time-slots/{service}', [DomainController::class, 'getTimeSlots'])->name('getTimeSlots');
+Route::get('/get-time-slots/{service}/{day}', [DomainController::class, 'getTimeSlots'])->name('getTimeSlots');
 Route::get('/get-pre-booked-slots/{date}', [DomainController::class, 'getPreBookedSlots'])->name('get.pre.booked.slots');
 // Route::get('/get-holidays', [DomainController::class, 'getHolidays'])->name('getHolidays');
 

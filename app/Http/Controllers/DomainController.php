@@ -35,10 +35,12 @@ class DomainController extends Controller
         return response()->json($services);
     }
 
-    public function getTimeSlots($serviceId)
+    public function getTimeSlots($serviceId, $day)
     {
         // Replace this with your actual logic to fetch time slots
         $timeSlots = ServiceTimeSlot::where('service_id', $serviceId)
+        ->where('day', $day)
+        ->where('activity_status', 'active')
         ->select('service_start_time', 'service_end_time','id')
         ->get()
         ->toArray();
@@ -55,6 +57,7 @@ class DomainController extends Controller
     return response()->json($preBookedSlots);
     }
 
+    
     // public function getHolidays()
     // {
     //     // Replace YourEventModel with the actual model you are using for events

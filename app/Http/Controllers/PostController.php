@@ -48,6 +48,7 @@ class PostController extends Controller
         $formData = $request->validate([
             'name' => 'required|string',
             'email' => 'required|email',
+            'contact' => 'required',
             'category' => 'required|string',
             'service' => 'required|string',
             'date' => 'required|date',

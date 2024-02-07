@@ -14,14 +14,14 @@ class EnquireController extends Controller
 {
     
     public function index()
-{
-    $requests = Enquire::select('Enquire.*', 'services.name as service_name', 'service_time_slots.service_start_time as service_start_time','service_time_slots.service_end_time as service_end_time')
-        ->leftJoin('services', 'Enquire.service', '=', 'services.id')
-        ->leftJoin('service_time_slots', 'Enquire.time', '=', 'service_time_slots.id')
-        ->get();
-
-    return view('dashboard.Enquire.index', compact('requests'));    
-}
+    {
+        $requests = Enquire::select('Enquire.*', 'services.name as service_name', 'service_time_slots.service_start_time as service_start_time', 'service_time_slots.service_end_time as service_end_time')
+            ->leftJoin('services', 'Enquire.service', '=', 'services.id')
+            ->leftJoin('service_time_slots', 'Enquire.time', '=', 'service_time_slots.id')
+            ->orderBy('created_at', 'desc') 
+            ->paginate(10); // Change the 10 to the number of items you want per page
+        return view('dashboard.Enquire.index', compact('requests'));    
+    }
 
     public function update(Request $request, $id)
     {

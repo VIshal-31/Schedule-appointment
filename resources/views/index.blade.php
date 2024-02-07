@@ -36,6 +36,10 @@
       <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email">
     </div>
     <div class="form-group">
+      <label for="contact"><b>Contact:</b></label>
+      <input type="number" class="form-control" name="contact" id="contact" placeholder="Enter your Contact No.">
+    </div>
+    <div class="form-group">
       <label for="category"><b>Category:</b></label>
       <select class="form-control" id="category" name="category">
         <option value="">Please Select Category</option>
@@ -115,16 +119,7 @@
         // Clear the date field when the service changes
         $('.day.selected').removeClass('selected');
 
-    if (serviceId) {
-        $.ajax({
-            type: "GET",
-            url: "/get-time-slots/" + serviceId,
-            success: function(data) {
-            console.table(data); // Log the received data in a tabular format
-            updateTimeSlots(data);
-            }
-        });
-    }
+
 });
 });
 
@@ -217,7 +212,31 @@ function updateTimeSlots(timeSlots) {
   
  <!-- Calendar JS -->
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+
+// get getServiceId
+function getServiceId() {
+    // Replace 'serviceId' with the actual ID of your input field
+    const serviceId = $('#service').val();
+    return serviceId;
+}
+
+  // get time slot 
+  function fetchTimeSlots(serviceId, dayName) {
+        $.ajax({
+            type: "GET",
+            url: "/get-time-slots/" + serviceId + "/" + dayName,
+            success: function(data) {
+                console.table(data);
+                updateTimeSlots(data);
+            },
+            error: function(err) {
+                console.error("Error fetching time slots:", err);
+            }
+        });
+    }
+
+
+  document.addEventListener("DOMContentLoaded", function () {
     const today = new Date();
     let currentMonth = today.getMonth();
     let currentYear = today.getFullYear();
@@ -280,6 +299,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     this.classList.add('selected');
 
                     document.getElementById('date').value = clickedDate;
+
+                    const serviceId = getServiceId();
+
+                    console.log("Service ID:", serviceId);
+
+                    const dayName = currentDay.toLowerCase();
+
+                    fetchTimeSlots(serviceId, dayName);
+
                     fetchPreBookedServiceSlots(clickedDate);
                 });
             }
@@ -378,4 +406,3 @@ function updateDisabledTimeSlots(preBookedSlots) {
         </script>
     @endforeach
 @endsection
-

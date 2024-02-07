@@ -77,7 +77,7 @@
     </div>
     <div class="form-group">
       <label for="message"><b>Message:</b></label>
-      <textarea class="form-control" id="message" name="message" rows="3" placeholder="Enter your message"></textarea>
+      <textarea class="form-control" id="message" name="message" rows="3" placeholder="Enter your message">{{ $enquiry->message }}</textarea>
     </div>
     <button type="submit" class="btn btn-primary border-0 py-3 px-5" style="background-color:#0000FF;">Submit</button>
   </form>
