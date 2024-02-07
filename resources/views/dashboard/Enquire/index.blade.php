@@ -4,7 +4,7 @@
 
 @section('dslot')
 <style>
-.table td {
+.table td, th {
       text-align: center;
       vertical-align: middle;
     }
@@ -58,7 +58,7 @@
             <td>{{ $request->created_at }}</td>
             <td>
                         <div class="btn-group">
-                            <button type="button" class="rounded btn-primary -toggle bi bi-three-dots-vertical"
+                            <button type="button" class="rounded btn-primary bi bi-three-dots-vertical"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 
                             </button>
@@ -85,9 +85,9 @@
 
     <div class="col-3 flex">
         @if ($requests->onFirstPage())
-        <b><span class="bi bi-caret-left px-2 py-2 text-gray-300" style="font-size:20px;">   Previous</span></b>
+       <span class="bi bi-caret-left px-2 py-2 text-gray-300" style="font-size:20px;">   Previous</span>
         @else
-            <a href="{{ $requests->previousPageUrl() }}" style="font-size:20px;" class="px-2 py-1 text-blue-500 hover:underline"><i class="bi bi-caret-left-fill"></i>Previous</a>
+        <b><a href="{{ $requests->previousPageUrl() }}" style="font-size:20px;" class="px-2 py-1 text-blue-500 hover:underline"><i class="bi bi-caret-left-fill"></i>Previous</a></b>
         @endif
     </div>
 

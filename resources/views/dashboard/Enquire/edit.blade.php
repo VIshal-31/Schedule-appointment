@@ -35,8 +35,12 @@
       <input type="email" value="{{ $enquiry->email }}" class="form-control" name="email" id="email" placeholder="Enter your email" readonly>
     </div>
     <div class="form-group">
+      <label for="contact"><b>Contact:</b></label>
+      <input readonly type="number" value="{{ $enquiry->contact }}" class="form-control" name="contact" id="contact" placeholder="Enter your Contact No.">
+    </div>
+    <div class="form-group">
       <label for="category"><b>Category:</b></label>
-      <select class="form-control" id="category" name="category" disabled>
+      <select class="form-control" id="category" name="category" >
         <option value="">Please Select Category</option>
         @foreach ($categories as $category)
         <option id="{{ $category->id }}" value="{{ $category->name }}" {{ $enquiry->category === $category->name ? 'selected' : '' }}>{{ $category->name }}</option>
@@ -46,7 +50,7 @@
 
     <div class="form-group">
       <label for="service"><b>Service:</b></label>
-      <select class="form-control" id="service" name="service" disabled>
+      <select class="form-control" id="service" name="service" >
         @foreach ($services as $service) <!-- Change $service to $services -->
           <option id="{{ $service->id }}" value="{{ $service->id }}" {{ $enquiry->service == $service->id ? 'selected' : '' }} >
             {{ $service->name }}
@@ -58,7 +62,9 @@
    
 
     <div class="form-group">
-    <div class="row m-0"><div class="col p-0"><b>Select Date:</b></div><div class="col d-flex align-items-end justify-content-end" id="workingDaysOutput"></div> </div>
+    <div class="row m-0"><div class="col p-0"><b>Select Date:</b></div>
+    <!-- <div class="col d-flex align-items-end justify-content-end" id="workingDaysOutput"></div>  -->
+  </div>
     <label for="date">  </label>
       <input type="hidden" class="form-control" id="date" name="date">
       <!-- calander start -->
@@ -387,7 +393,7 @@ function updateDisabledTimeSlots(preBookedSlots) {
 
 @foreach($holidays as $holiday)
         <script>
-            console.log('Event Date:', '{{ $holiday->event_date }}');
+            console.log('Event Date:', '{{ $holiday->event_date }} + {{ $enquiry->date }}');
         </script>
     @endforeach
       

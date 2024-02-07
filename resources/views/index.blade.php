@@ -8,7 +8,7 @@
 <div class="container my-4">
   <div class="d-flex align-items-center justify-content-center m-4"><h1><b>{{ $shop->name }}</b></h1></div>
   <hr>
-  <div class="row mx-0 my-4"><h3 class="col">Book Your Appoitment Now</h3><h4>Opening Time : {{ $shop->opening_time }} - Closing Time : {{ $shop->closing_time }}</h4></div>
+  <!-- <div class="row mx-0 my-4"><h3 class="col">Book Your Appoitment Now</h3><h4>Opening Time : {{ $shop->opening_time }} - Closing Time : {{ $shop->closing_time }}</h4></div> -->
   @if(session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
@@ -59,7 +59,10 @@
    
 
     <div class="form-group">
-    <div class="row m-0"><div class="col p-0"><b>Select Date:</b></div><div class="col d-flex align-items-end justify-content-end" id="workingDaysOutput"></div> </div>
+    <div class="row m-0"><div class="col p-0"><b>Select Date:</b></div>
+    
+    <!-- <div class="col d-flex align-items-end justify-content-end" id="workingDaysOutput"></div>  -->
+  </div>
     <label for="date">  </label>
       <input type="hidden" class="form-control" id="date" name="date">
       <!-- calander start -->
@@ -73,8 +76,8 @@
     </div>
 
     <div ><b>Select Time Slot:</b></div>
-    <div class="form-group" id="time">
-       <!-- Example usage of the custom radio button -->
+    <div class="form-group p-2" style="font-size: 16px;" id="time">
+       Please Select Date First 
     </div>
     <div class="form-group">
       <label for="message"><b>Message:</b></label>
