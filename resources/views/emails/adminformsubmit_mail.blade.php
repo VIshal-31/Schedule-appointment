@@ -64,10 +64,9 @@
 </head>
 
 <body>
-    <div class="container">
-        <header>
+    <div class="container" style="border:solid 2px #274e8780">
+        <header style="background-color:#274e87; padding: 20px;">
             <img src="https://webwideit.solutions/img/logo/webwide-logo-white-small.png" alt="Company Logo">
-            <h1>Webwide It Solutions</h1>
         </header>
 
         <p>Hello Admin,</p>

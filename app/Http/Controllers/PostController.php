@@ -81,6 +81,19 @@ class PostController extends Controller
             return back()->withErrors(['time' => 'Invalid time selected. Service start time has passed for today.']);
         }
     
+        $existingEnquiry = Enquire::where([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'contact' => $request->input('contact'),
+            'category' => $request->input('category'),
+            'service' => $request->input('service'),
+            'date' => $request->input('date'),
+            'time' => $request->input('time'),
+            'message' => $request->input('message'),      
+        ])->first();
+    
+        if (!$existingEnquiry) {
+        
         // Create Enquire record with the updated formData
         $enquire = Enquire::create([
             'name' => $formData['name'],
@@ -136,7 +149,10 @@ class PostController extends Controller
     
         return back()->with('success', 'Data Submitted !!!');
     }
-
+    else {
+        return back()->with('success', 'Data Submitted !!!');
+    }
+    }
 
 
     public function updateEnquiry(Request $request, $id)
