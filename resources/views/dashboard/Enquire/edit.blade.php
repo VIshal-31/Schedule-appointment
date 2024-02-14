@@ -348,6 +348,8 @@ function getServiceId() {
                     fetchTimeSlots(serviceId, dayName);
 
                     fetchPreBookedServiceSlots(clickedDate);
+
+                    enableuserslotid();
                 });
             }
 
@@ -422,15 +424,29 @@ function updateDisabledTimeSlots(preBookedSlots) {
     // Disable time slots based on pre-booked service slots
     $('input[type="radio"]').prop('disabled', false); // Enable all time slots initially
 
+
+  
     // Hide the time slots that are pre-booked
     $.each(preBookedSlots, function(index, id) {
+
+      const userslotid = "{{ $enquiry->time }}";
+    console.log(userslotid);
+
+    var userslot = document.getElementById(userslotid);
     var inputElement = document.getElementById(id);
+   
     if (inputElement) {
         // Disable the input element
         inputElement.disabled = true;
     }
+    if (userslot) {
+        // Disable the input element
+        userslot.disabled = false;
+    }
+
 });
 }
+
 </script>
 
 <style>
