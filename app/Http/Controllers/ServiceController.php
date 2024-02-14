@@ -44,8 +44,6 @@ class ServiceController extends Controller
             'category_id' => $validatedData['category_id'],
             'name' => $validatedData['name'],
             'time_required' => $validatedData['timerequired'],
-            
-            
             // Other fields as necessary
         ]);
 
@@ -179,42 +177,92 @@ class ServiceController extends Controller
             // Update other fields as necessary
         ]);
 
-        // Update service time slots
-        $shop = Shop::find(1); // Assuming the shop you want has id = 1
-        $shopStartTime = Carbon::createFromFormat('H:i:s', $shop->first_slot_start_time);
-        $shopEndTime = Carbon::createFromFormat('H:i:s', $shop->first_slot_end_time);
+        ServiceTimeSlot::where('service_id', $id)->delete();
+    
+        // Loop through schedules from ID 1 to 7
+        for ($scheduleId = 1; $scheduleId <= 7; $scheduleId++) {
+            
+            $schedule = Schedule::find($scheduleId);
+            
+            $shopStartTime = Carbon::createFromFormat('H:i:s', $schedule->first_slot_start_time); // Convert to Carbon
+            $shopEndTime = Carbon::createFromFormat('H:i:s', $schedule->first_slot_end_time); // Convert to Carbon   
+            $days = $schedule->day ;
+            $activity_statuss = $schedule->activity_status ;
+            // data from form
 
-        $interval = $validatedData['timerequired'];
-        $currentSlotStartTime = $shopStartTime;
-        $endtime = $shopStartTime->copy()->addMinutes($interval)->format('H:i');
+            // Validate service start time and end time
+            $serviceStartTime = $shopStartTime;
+            $serviceEndTime = $serviceStartTime->copy()->addMinutes($validatedData['timerequired']);
+    
+            if (!$schedule || !$schedule->first_slot_start_time || !$schedule->first_slot_end_time) {
+                // Schedule not found or missing start/end time
+                return redirect()->back()->withErrors(['timerequired' => 'Unable to fetch schedule details. Schedule data may be missing.'])->withInput();
+            }
 
-        // Delete existing service time slots for the updated service
-        ServiceTimeSlot::where('service_id', $service->id)->delete();
+            
+            if ( $serviceEndTime < $shopEndTime) {
+    
+                // Create service time slots
+                $interval = $validatedData['timerequired'];
+                $currentSlotStartTime = $shopStartTime;
+                $endtime = $shopStartTime->copy()->addMinutes($interval)->format('H:i');
+    
+                while ($endtime <= $shopEndTime) {
+    
+                    $currentSlotEndTime = $currentSlotStartTime->copy()->addMinutes($interval);
+                    // Create a new service time slot
+                    ServiceTimeSlot::create([
+                        'service_id' => $service->id,
+                        'service_start_time' => $currentSlotStartTime->format('H:i'), // Format as 'H:i'
+                        'service_end_time' => $currentSlotEndTime->format('H:i'), // Format as 'H:i'
+                        'day' => $days,
+                        'activity_status' => $activity_statuss,
+                    ]);
+    
+                    // Move to the next slot
+                    $currentSlotStartTime = $currentSlotEndTime;
+                    $endtime = $currentSlotEndTime->copy()->addMinutes($interval);
+                }
 
-        // Recreate service time slots based on the updated time requirements
-        while ($endtime <= $shopEndTime) {
-            $currentSlotEndTime = $currentSlotStartTime->copy()->addMinutes($interval);
-            // Create a new service time slot
-            ServiceTimeSlot::create([
-                'service_id' => $service->id,
-                'service_start_time' => $currentSlotStartTime->format('H:i'), // Format as 'H:i'
-                'service_end_time' => $currentSlotEndTime->format('H:i'), // Format as 'H:i'
-            ]);
 
-            // Move to the next slot
-            $currentSlotStartTime = $currentSlotEndTime;
-            $endtime = $currentSlotEndTime->copy()->addMinutes($interval);
+                $secondshopStartTime = Carbon::createFromFormat('H:i:s', $schedule->second_slot_start_time); // Convert to Carbon
+                $secondshopEndTime = Carbon::createFromFormat('H:i:s', $schedule->second_slot_end_time); // Convert to Carbon   
+    
+                $secondserviceEndTime = $serviceStartTime->copy()->addMinutes($validatedData['timerequired']);
+
+                $interval = $validatedData['timerequired'];
+                $secondcurrentSlotStartTime = $secondshopStartTime;
+                $secondendtime = $secondshopStartTime->copy()->addMinutes($interval)->format('H:i');
+
+                while ($secondendtime <= $secondshopEndTime) {
+    
+                    $secondcurrentSlotEndTime = $secondcurrentSlotStartTime->copy()->addMinutes($interval);
+                    // Create a new service time slot
+                    ServiceTimeSlot::create([
+                        'service_id' => $service->id,
+                        'service_start_time' => $secondcurrentSlotStartTime->format('H:i'), // Format as 'H:i'
+                        'service_end_time' => $secondcurrentSlotEndTime->format('H:i'), // Format as 'H:i'
+                        'day' => $days,
+                        'activity_status' => $activity_statuss,
+                    ]);
+    
+                    // Move to the next slot
+                    $secondcurrentSlotStartTime = $secondcurrentSlotEndTime;
+                    $secondendtime = $secondcurrentSlotEndTime->copy()->addMinutes($interval);
+                }
+            }
         }
-
-        return redirect()->route('dashboard.services')->with('success', 'Service updated successfully');
-
-    } catch (ModelNotFoundException $e) {
-        return redirect()->back()->withErrors(['timerequired' => 'Service not found.'])->withInput();
-    } catch (ValidationException $e) {
-        // Redirect back with errors if validation fails
-        return redirect()->back()->withErrors($e->validator->errors())->withInput();
+                // Redirect back with success message if needed
+                return redirect()->route('dashboard.services')->with('success', 'Service added successfully');
+    
+             
+        
+    
+        } catch (ValidationException $e) {
+            // Redirect back with errors if validation fails
+            return redirect()->back()->withErrors($e->validator->errors())->withInput();
+        }
     }
-}
 
     
     public function timeSlots()

@@ -17,8 +17,11 @@ return new class extends Migration
         $table->string('email');
         $table->string('category');
         $table->string('service');
+        $table->string('service_name');
         $table->date('date');
         $table->int('time');
+        $table->Time('service_start_time');
+        $table->Time('service_end_time');
         $table->text('message');
         $table->timestamps();
     });

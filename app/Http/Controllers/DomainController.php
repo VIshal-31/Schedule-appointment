@@ -9,6 +9,7 @@ use App\Models\Shop;
 use App\Models\ServiceTimeSlot;
 use App\Models\Enquire;
 use App\Models\Holiday;
+use App\Models\Schedule;
 
 
 
@@ -20,11 +21,12 @@ class DomainController extends Controller
         $services = Service::all(); // Fetch existing services
         $categories = Category::all(); // Fetch categories
         $holidays = Holiday::all(); // Fetch categories
+        $schedule = Schedule::where('activity_status', 'active')->pluck('day');
         $holidayDates = $holidays->pluck('event_date')->toArray();
         $shop = Shop::find(1);
         // Example code in your controller
         $workingDays = json_encode(explode(',', $shop->working_days));
-        return view('index', compact('services','categories','shop','workingDays','holidays','holidayDates'));
+        return view('index', compact('services','categories','shop','workingDays','holidays','holidayDates','schedule'));
         return response()->json($shop);
     }
 
@@ -51,7 +53,7 @@ class DomainController extends Controller
     public function getPreBookedSlots($date)
     {
     $preBookedSlots = Enquire::where('date', $date)
-        ->pluck('time') // Assuming there is a column 'service_slot_id' in your table
+        ->pluck('time') 
         ->toArray();
 
     return response()->json($preBookedSlots);

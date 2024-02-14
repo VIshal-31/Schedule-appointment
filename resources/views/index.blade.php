@@ -27,19 +27,26 @@
   <form action="{{ route('submit.form') }}" method="POST">
     <!-- Form fields -->
     @csrf
-    <div class="form-group">
+    <div class="row">
+    <div class="form-group col-6">
       <label for="name"><b>Name:</b></label>
       <input type="text" class="form-control" name="name" id="name" placeholder="Enter your name">
     </div>
-    <div class="form-group">
+    
+    <div class="form-group col-6">
       <label for="email"><b>Email:</b></label>
       <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email">
     </div>
-    <div class="form-group">
-      <label for="contact"><b>Contact:</b></label>
+    </div>
+    <div class="row">
+    <div class="form-group col-6">
+      <label for="contact"><b>Contact Number:</b></label>
       <input type="number" class="form-control" name="contact" id="contact" placeholder="Enter your Contact No.">
     </div>
-    <div class="form-group">
+    </div>
+
+    <div class="row">
+    <div class="form-group col-6">
       <label for="category"><b>Category:</b></label>
       <select class="form-control" id="category" name="category">
         <option value="">Please Select Category</option>
@@ -49,13 +56,13 @@
       </select>
     </div>
 
-    <div class="form-group">
+    <div class="form-group col-6">
       <label for="service"><b>Service:</b></label>
       <select class="form-control" id="service" name="service">
         <option value="">Select service</option>
       </select>
     </div>
-    
+</div>
    
 
     <div class="form-group">
@@ -77,7 +84,7 @@
 
     <div ><b>Select Time Slot:</b></div>
     <div class="form-group p-2" style="font-size: 16px;" id="time">
-       Please Select Date First 
+       Please select Category, Service & Date.  
     </div>
     <div class="form-group">
       <label for="message"><b>Message:</b></label>
@@ -130,6 +137,11 @@ function updateTimeSlots(timeSlots) {
     // Clear existing time slots
     $('#time').empty();
 
+    if (!timeSlots || timeSlots.length === 0) {
+        // Display a message in the #time element
+        $('#time').text('No available time slots for the selected day and service.');
+        return;
+    }
     // Add new time slots
     $.each(timeSlots, function(index, timeSlot) {
        
@@ -245,7 +257,8 @@ function getServiceId() {
     let currentYear = today.getFullYear();
 
     // Extract workingDays array from PHP
-    const workingDays = {!! json_encode($workingDays) !!};
+    const workingDays = {!! json_encode($schedule) !!};
+
 
     // Extract holiday dates array from PHP
     const holidayDates = {!! json_encode($holidayDates) !!};
@@ -309,6 +322,11 @@ function getServiceId() {
 
                     const dayName = currentDay.toLowerCase();
 
+                    if (!clickedDate || !serviceId) {
+                      // Display a message if either date or service is not selected
+                   document.getElementById('time').textContent = 'Please select both Category and Service before fetching time slots.';
+                 return;
+              }
                     fetchTimeSlots(serviceId, dayName);
 
                     fetchPreBookedServiceSlots(clickedDate);
@@ -372,7 +390,8 @@ function fetchPreBookedServiceSlots(selectedDate) {
         url: "/get-pre-booked-slots/" + selectedDate,
         success: function(data) {
             // data is an array of pre-booked service slot IDs
-            updateDisabledTimeSlots(data);         
+            updateDisabledTimeSlots(data);  
+                   
         },
         error: function(err) {
             console.error('Error fetching pre-booked service slots:', err);
@@ -400,12 +419,8 @@ function updateDisabledTimeSlots(preBookedSlots) {
     /* Add this style to hide disabled time slots */
     input[type="radio"]:disabled + .radio-label {
         display: none;
+        background-color: gray;
     }
 </style>
 
-@foreach($holidays as $holiday)
-        <script>
-            console.log('Event Date:', '{{ $holiday->event_date }}');
-        </script>
-    @endforeach
 @endsection

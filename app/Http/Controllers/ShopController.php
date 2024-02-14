@@ -47,6 +47,15 @@ class ShopController extends Controller
         ]);
 
         $day = $validatedData['day'];
+
+            // Additional check for the time slots
+    if (strtotime($validatedData['firstslotstarttime']) >= strtotime($validatedData['firstslotendtime']) ||
+        strtotime($validatedData['secondslotstarttime']) >= strtotime($validatedData['secondslotendtime']) ||
+        strtotime($validatedData['secondslotstarttime']) < strtotime($validatedData['firstslotendtime'])
+    ) {
+        return redirect()->back()->with('error', 'Invalid time slots. Please check the time values.');
+    }
+
     
         $schedule = Schedule::find($id); // Find the shop by its ID (change '1' to the required ID)
     

@@ -10,7 +10,14 @@ class UserFormSubmitMail extends Mailable
     use Queueable, SerializesModels;
 
     public $userEmail;
-    public $name;
+    public $userName;
+    public $id;
+    public $category;
+    public $service_name;
+    public $date;
+    public $service_start_time;
+    public $service_end_time;
+
 
     /**
      * Create a new message instance.
@@ -18,10 +25,16 @@ class UserFormSubmitMail extends Mailable
      * @param string $userEmail
      * @param string $name
      */
-    public function __construct($userEmail, $name)
+    public function __construct($id, $userEmail, $userName, $category, $service_name, $date, $service_start_time, $service_end_time)
     {
+        $this->id = $id;
         $this->userEmail = $userEmail;
-        $this->name = $name;
+        $this->userName = $userName;
+        $this->category = $category;
+        $this->service_name = $service_name;
+        $this->date = $date;
+        $this->service_start_time = $service_start_time;
+        $this->service_end_time = $service_end_time;
     }
 
     /**

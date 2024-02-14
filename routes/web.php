@@ -15,6 +15,7 @@ use App\Http\Controllers\CalendarController;
 
 
 
+
 //views
 Route::get('/', [DomainController::class, 'index'])->name('index');
 Route::get('/aboutus', function () {return view('aboutus');});
@@ -94,7 +95,9 @@ Route::middleware('auth')->group(function () {
 
     //holidays  
     Route::post('/holidays', [HolidayController::class, 'store'])->name('holidays.store');
-
+    Route::delete('/holidays/{id}', [HolidayController::class, 'destroy'])->name('holidays.destroy');
+    Route::get('/holidays/{id}/edit', [HolidayController::class, 'edit'])->name('holidays.edit');
+    Route::put('/holidays/{id}', [HolidayController::class, 'update'])->name('holidays.update');
     Route::post('/dashboard/shopholidaysfilter', [ShopController::class, 'showFilteredHolidays'])->name('dashboard.showFilteredHolidays');
         
 

@@ -4,9 +4,25 @@
 
 @section('dslot')
 
+
 <div class="col-md-9">
     <!-- Edit Service Form -->
     <h1>Edit Service</h1>
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif 
     @if($errors->any())
     <div class="alert alert-danger">
         <ul>

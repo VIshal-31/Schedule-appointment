@@ -9,7 +9,7 @@
       vertical-align: middle;
     }
 </style>
-<div class="col-md-9">
+<div class="col-md-10">
 @if(session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
@@ -37,6 +37,7 @@
             <th>Service</th>
             <th>Date</th>
             <th>Time Slot</th>
+            <th>Status</th>
             <!-- <th>Message</th> -->
             <th>Request Time</th>
             <th>Action</th>
@@ -52,8 +53,9 @@
             <td ><a href="tel:{{ $request->contact }}"><i class="bi bi-telephone-plus-fill" data-toggle="tooltip" data-placement="top" title="{{ $request->contact }}"></i></td>
             <td>{{ $request->category }}</td>
             <td>{{ $request->service_name }}</td>
-            <td>{{ $request->date }}</td>
-            <td>{{ $request->service_start_time }} to {{ $request->service_end_time }}</td>
+            <td class="col-2">{{ $request->date }}</td>
+            <td>{{ $request->service_start_time }}<br> to<br> {{ $request->service_end_time }}</td>
+            <td>{{ $request->Status }}</td>
             <!-- <td>{{ $request->message }}</td> -->
             <td>{{ $request->created_at }}</td>
             <td>

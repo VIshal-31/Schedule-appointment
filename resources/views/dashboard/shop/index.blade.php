@@ -42,7 +42,11 @@
         {{ session('success') }}
     </div>
 @endif
-
+@if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
 <!-- Error -->
 @if($errors->any())
     <div class="alert alert-danger">
@@ -120,9 +124,10 @@
 </table>
     </div>
 
-    <div class="row my-3">
+
+    <!-- <div class="row my-3">
     <!-- Opening time -->
-        <div class="col-6">
+        <!-- <div class="col-6">
             <div class="col-10">
                 <h3 class="">Shop opening Time</h3>
                     <div id="shopopeningtime">
@@ -145,7 +150,7 @@
         </div>
         
         <!-- Closing Time -->
-        <div class="col-6">
+        <!-- <div class="col-6">
             <div class="col-10">
                 <h3 class="">Shop Closing Time</h3>
                     <div id="shopclosingtime">
@@ -165,10 +170,10 @@
             </div>
             <hr class="">
         </div> 
-    </div>
+    </div> -->
 
 <!-- Week Days -->
-    <div class="pb-3">
+    <!-- <div class="pb-3">
         <h3 class="col-12 px-2">Shop Weekly Working Days</h3>
             <div class="col-12 row p-2" id="shopweekdays"> 
                 
@@ -249,10 +254,10 @@
                     </div>
             </div>
         <hr>
-    </div>
+    </div> -->
 
 <!-- Holiday -->
-    <div class="col-12 p-0 row">
+    <div class="col-12 p-0 mt-5 row">
         <div class="col-6"> 
         <h3>Shop Holiday</h3>
         </div> 
@@ -285,6 +290,7 @@
                     <th>ID</th>
                     <th>Event Name</th>
                     <th>Event Date</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody id="holidaysTableBody">
@@ -294,6 +300,12 @@
                         <td>{{ $holiday->id }}</td>
                         <td>{{ $holiday->event_name }}</td>
                         <td>{{ $holiday->event_date }}</td>
+                        <td class="align-items-center justify-content-center">  
+                        <a href="{{ route('holidays.destroy', ['id' => $holiday->id]) }}" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $holiday->id }}').submit();">
+                            <i class="bi bi-trash3"></i>
+                            </a>
+                            
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
@@ -301,7 +313,10 @@
     </div>
 </div>
 
-
+<form id="delete-form-{{ $holiday->id }}" action="{{ route('holidays.destroy', ['id' => $holiday->id]) }}" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
         <div id="shopholidayform" style="display:none;" class="my-2 row ">
        
         <form class="col-6" action="{{ route('holidays.store') }}" method="post">

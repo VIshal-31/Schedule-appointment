@@ -79,45 +79,45 @@
     <div class="container-fluid">
         <div class="row mt-4">
             <!-- Sidebar -->
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
+            <div class="col-md-2">
+                <div class="">
+                    <div class="">
                         <!-- Sidebar content -->
                         <a href="{{ route('dashboard.enquire') }}"><ul class="list-group">
-                            <li class="list-group-item">Enquires</li>
+                            <li class="border-bottom-0 list-group-item">Enquires</li>
                             <!-- Add more sidebar items -->
                         </ul></a>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-body">
+                <div class="">
+                    <div class="">
                         <!-- Sidebar content -->
                         <a href="{{ route('dashboard.shop') }}"><ul class="list-group">
-                            <li class="list-group-item">Shop Details</li>
+                            <li class="border-bottom-0 list-group-item">Shop Details</li>
                             <!-- Add more sidebar items -->
                         </ul></a>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-body">
+                <div class="">
+                    <div class="">
                         <!-- Sidebar content -->
                         <a href="{{ route('dashboard.categories') }}"><ul class="list-group">
-                            <li class="list-group-item">Category</li>
+                            <li class="border-bottom-0 list-group-item">Category</li>
                             <!-- Add more sidebar items -->
                         </ul></a>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-body">
+                <div class="">
+                    <div class="">
                         <!-- Sidebar content -->
                         <a href="{{ route('dashboard.services') }}"><ul class="list-group">
-                            <li class="list-group-item">Service</li>
+                            <li class="border-bottom-0 list-group-item">Service</li>
                             <!-- Add more sidebar items -->
                         </ul></a>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-body">
+                <div class="">
+                    <div class="">
                         <!-- Sidebar content -->
                         <a href="{{ route('dashboard.calendar') }}"><ul class="list-group">
                             <li class="list-group-item">Calendar</li>

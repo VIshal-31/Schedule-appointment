@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Mail;
 
 use App\Mail\AdminFormSubmitMail;
 use App\Mail\UserFormSubmitMail;
+use App\Models\ServiceTimeSlot;
+use App\Models\Service;
+use Carbon\Carbon;
+
 
 
 
@@ -42,9 +46,10 @@ class PostController extends Controller
     } 
    
 
+
+
     public function Enquire(Request $request)
     {
-        
         $formData = $request->validate([
             'name' => 'required|string',
             'email' => 'required|email',
@@ -54,25 +59,84 @@ class PostController extends Controller
             'date' => 'required|date',
             'time' => 'required',
             'message' => 'required|string',
-         ]);
-        
-         $Enquire = Enquire::create($formData);
-
+        ]);
+    
+        // Retrieve timeslot information based on the selected time
+        $selectedTimeId = $request->input('time');
+        $timeSlot = ServiceTimeSlot::find($selectedTimeId);
+    
+        $serviceId = $request->input('service');
+        $servicename = Service::find($serviceId);
+    
+        if (!$timeSlot || !$servicename) {
+            \Log::error('Invalid Time ID or Service ID');
+            return back()->withErrors(['time' => 'Invalid time or service selected']);
+        }
+    
+        // Check if the date is today and service_start_time is less than the current time
+        $currentDateTime = Carbon::now();
+        $selectedDateTime = Carbon::parse($formData['date'] . ' ' . $timeSlot->service_start_time);
+    
+        if ($selectedDateTime->isToday() && $selectedDateTime->lt($currentDateTime)) {
+            return back()->withErrors(['time' => 'Invalid time selected. Service start time has passed for today.']);
+        }
+    
+        // Create Enquire record with the updated formData
+        $enquire = Enquire::create([
+            'name' => $formData['name'],
+            'email' => $formData['email'],
+            'contact' => $formData['contact'],
+            'category' => $formData['category'],
+            'service' => $formData['service'],
+            'date' => $formData['date'],
+            'time' => $formData['time'],
+            'message' => $formData['message'],
+            'service_start_time' => $timeSlot->service_start_time,
+            'service_end_time' => $timeSlot->service_end_time,
+            'service_name' => $servicename->name,
+        ]);
+    
         // Get the user's email and name from the request
         $userEmail = $request->input('email');
         $userName = $request->input('name');
-         
+        $category = $request->input('category');
+        $service_name = $enquire->service_name;
+        $date = $request->input('date');
+        $service_start_time = $timeSlot->service_start_time;
+        $service_end_time = $timeSlot->service_end_time;
+    
         // Set the admin email address (replace with the actual admin email)
         $adminEmail = 'vishal@webwideit.solutions';
-         
+        $id = $enquire->id;
+    
         // Send the email to the user
-        Mail::to($userEmail)->send(new UserFormSubmitMail($userEmail, $userName));
-         
+
+        Mail::to($userEmail)->send(new UserFormSubmitMail(
+            $id,
+            $userEmail,
+            $userName,
+            $category,
+            $service_name,
+            $date,
+            $service_start_time,
+            $service_end_time
+        )); 
+    
         // Send a separate email to the admin
-        Mail::to($adminEmail)->send(new AdminFormSubmitMail($adminEmail, $userName));
- 
+        Mail::to($adminEmail)->send(new AdminFormSubmitMail($adminEmail,
+        $id,
+        $userEmail,
+        $userName,
+        $category,
+        $service_name,
+        $date,
+        $service_start_time,
+        $service_end_time
+    ));
+    
         return back()->with('success', 'Data Submitted !!!');
-        }
+    }
+
 
 
     public function updateEnquiry(Request $request, $id)

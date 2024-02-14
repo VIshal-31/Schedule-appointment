@@ -65,7 +65,15 @@
       </select>
     </div>
     
-   
+    <div class="form-group">
+    <div class="row m-0"><div class="col p-0"><b>Selected Date:</b> {{ $enquiry->date }}</div>
+    </div>    
+    </div>    
+  <div class="form-group">
+  <div class="form-group" id="seletedtime"> <p><b>Seleted Time Slot :</b> {{ $enquiry->service_start_time ?? '' }} To {{ $enquiry->service_end_time ?? '' }}</p>
+  </div>    
+    
+    </div>
 
     <div class="form-group">
     <div class="row m-0"><div class="col p-0"><b>Select Date:</b></div>
@@ -105,7 +113,6 @@
   </form>
   
 </div>
-
 <!-- JavaScript -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -134,8 +141,9 @@
 
     // Handle service change separately
     $('#service').change(function() {
-    
-      var serviceId = $(this).val();
+    var serviceId = $(this).val();
+
+  
         // Clear the date field when the service changes
         $('.day.selected').removeClass('selected');
 
@@ -147,6 +155,11 @@ function updateTimeSlots(timeSlots) {
     // Clear existing time slots
     $('#time').empty();
 
+    if (!timeSlots || timeSlots.length === 0) {
+        // Display a message in the #time element
+        $('#time').text('No available time slots for the selected day and service.');
+        return;
+    }
     // Add new time slots
     $.each(timeSlots, function(index, timeSlot) {
        
@@ -262,7 +275,8 @@ function getServiceId() {
     let currentYear = today.getFullYear();
 
     // Extract workingDays array from PHP
-    const workingDays = {!! json_encode($workingDays) !!};
+    const workingDays = {!! json_encode($schedule) !!};
+
 
     // Extract holiday dates array from PHP
     const holidayDates = {!! json_encode($holidayDates) !!};
@@ -305,7 +319,7 @@ function getServiceId() {
 
             day.innerText = i;
 
-            if (!workingDays.includes(currentDay) || isPastDate) {
+            if (!workingDays.includes(currentDay) || isPastDate || isHoliday) {
                 day.classList.add('disabled', 'holiday');
             } else {
                 day.addEventListener('click', function () {
@@ -319,47 +333,27 @@ function getServiceId() {
                     this.classList.add('selected');
 
                     document.getElementById('date').value = clickedDate;
+
+                    const serviceId = getServiceId();
+
+                    console.log("Service ID:", serviceId);
+
+                    const dayName = currentDay.toLowerCase();
+
+                    if (!clickedDate || !serviceId) {
+                      // Display a message if either date or service is not selected
+                   document.getElementById('time').textContent = 'Please select both Category and Service before fetching time slots.';
+                 return;
+              }
+                    fetchTimeSlots(serviceId, dayName);
+
                     fetchPreBookedServiceSlots(clickedDate);
                 });
             }
 
             if (isHoliday && currentDate.toISOString().split('T')[0] !== today.toISOString().split('T')[0]) {
-                day.classList.add('holiday');
+                day.classList.add('disabled','holiday');
             }
-
-            // Set default selected date
-        const defaultDate = '{{ $enquiry->date }}';
-          if (i === parseInt(defaultDate.split('-')[2])) {
-              day.classList.add('selected');
-              day.classList.remove('disabled', 'holiday');
-              document.getElementById('date').value = defaultDate;
-
-              fetchPreBookedServiceSlots(defaultDate);
-          }
-          
-          const serviceId = getServiceId();
-          console.log("Service ID:", serviceId);
-          const dayName = currentDay.toLowerCase();
-          console.log("Service ID:", dayName);
-
-          fetchTimeSlots(serviceId, dayName);
-
-          const defaulttimeslot = '{{ $enquiry->time }}';
-          
-          function selectRadioButton(defaulttimeslot) {
-              var radioToSelect = document.getElementById(defaulttimeslot);
-          
-              if (radioToSelect) {
-                  // Set the 'checked' property to true
-                  radioToSelect.checked = true;
-              }
-          }
-
-        // Use setTimeout to add a delay before calling selectRadioButton
-        setTimeout(function () {
-            selectRadioButton(defaulttimeslot);
-        }, 1000);
-
 
             calendarDays.appendChild(day);
         }
@@ -368,8 +362,6 @@ function getServiceId() {
     renderCalendar();
 
     document.getElementById('previousmonth').addEventListener('click', function () {
-
-      
     currentMonth = (currentMonth - 1 + 12) % 12; // Ensure positive modulo
 
     // Update currentYear based on the change in currentMonth
@@ -378,13 +370,9 @@ function getServiceId() {
     }
 
     renderCalendar();
-    $('.day.selected').removeClass('selected');
-    
 });
 
 document.getElementById('nextmonth').addEventListener('click', function () {
-
-  $('.day.selected').removeClass('selected');
     currentMonth = (currentMonth + 1) % 12;
 
     // Update currentYear based on the change in currentMonth
@@ -393,8 +381,6 @@ document.getElementById('nextmonth').addEventListener('click', function () {
     }
 
     renderCalendar();
-    $('.day.selected').removeClass('selected');
-
 });
 });
 
@@ -422,7 +408,8 @@ function fetchPreBookedServiceSlots(selectedDate) {
         url: "/get-pre-booked-slots/" + selectedDate,
         success: function(data) {
             // data is an array of pre-booked service slot IDs
-            updateDisabledTimeSlots(data);         
+            updateDisabledTimeSlots(data);  
+                   
         },
         error: function(err) {
             console.error('Error fetching pre-booked service slots:', err);
@@ -450,15 +437,8 @@ function updateDisabledTimeSlots(preBookedSlots) {
     /* Add this style to hide disabled time slots */
     input[type="radio"]:disabled + .radio-label {
         display: none;
+        background-color: gray;
     }
 </style>
 
-    @foreach($holidays as $holiday)
-        <script>
-            console.log('Event Date:', '{{ $holiday->event_date }}');
-        </script>
-    @endforeach
-
 @endsection
-
-
