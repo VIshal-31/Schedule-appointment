@@ -41,9 +41,9 @@
         Services
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Service</a>
           <a class="dropdown-item" href="#">Service 1</a>
           <a class="dropdown-item" href="#">Service 2</a>
+          <a class="dropdown-item" href="#">Service 3</a>
         </div>
       </li>
    
