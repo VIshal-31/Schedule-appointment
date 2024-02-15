@@ -307,7 +307,7 @@
                             
                         </td>
                     </tr>
-                @endforeach
+                
             </tbody>
         </table>
     </div>
@@ -316,7 +316,7 @@
 <form id="delete-form-{{ $holiday->id }}" action="{{ route('holidays.destroy', ['id' => $holiday->id]) }}" method="POST" style="display: none;">
     @csrf
     @method('DELETE')
-</form>
+</form>@endforeach
         <div id="shopholidayform" style="display:none;" class="my-2 row ">
        
         <form class="col-6" action="{{ route('holidays.store') }}" method="post">

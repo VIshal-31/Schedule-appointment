@@ -5,28 +5,29 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class UserFormSubmitMail extends Mailable
+class AdminConfirmMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $adminEmail;
     public $userEmail;
-    public $userName;
     public $id;
+    public $userName;
     public $category;
     public $service_name;
     public $date;
     public $service_start_time;
     public $service_end_time;
 
-
     /**
      * Create a new message instance.
      *
-     * @param string $userEmail
+     * @param string $adminEmail
      * @param string $name
      */
-    public function __construct($id, $userEmail, $userName, $category, $service_name, $date, $service_start_time, $service_end_time)
+    public function __construct($adminEmail, $id, $userEmail, $userName, $category, $service_name, $date, $service_start_time, $service_end_time)
     {
+        $this->adminEmail = $adminEmail;
         $this->id = $id;
         $this->userEmail = $userEmail;
         $this->userName = $userName;
@@ -44,7 +45,7 @@ class UserFormSubmitMail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.userformsubmit_mail')
-            ->subject('Your Appointment Request Successfully Submitted');
+        return $this->view('emails.adminConfimMail')
+            ->subject('Appointment Confirmation');
     }
 }

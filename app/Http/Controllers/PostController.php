@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Mail;
 
 use App\Mail\AdminFormSubmitMail;
 use App\Mail\UserFormSubmitMail;
+use App\Mail\UserConfirmMail;
+use App\Mail\AdminConfirmMail;
 use App\Models\ServiceTimeSlot;
 use App\Models\Service;
 use Carbon\Carbon;
@@ -156,39 +158,88 @@ class PostController extends Controller
 
 
     public function updateEnquiry(Request $request, $id)
-        {
-            $formData = $request->validate([
-                'name' => 'required|string',
-                'email' => 'required|email',
-                'contact' => 'required',
-                'category' => 'required|string',
-                'service' => 'required|string',
-                'date' => 'required|date',
-                'time' => 'required',
-                'message' => 'required|string',
-                'status' => 'required', 
-            ]);
-        
-            // Find the existing record by ID
-            $enquiry = Enquire::findOrFail($id);
-        
-            // Update the record with new data
-            $enquiry->update($formData);
-        
-            // Get the user's email and name from the request
-            $userEmail = $request->input('email');
-            $userName = $request->input('name');
-        
-            // Set the admin email address (replace with the actual admin email)
-            $adminEmail = 'vishal@webwideit.solutions';
-        
-            // Send the email to the user
-            Mail::to($userEmail)->send(new UserFormSubmitMail($userEmail, $userName));
-        
-            // Send a separate email to the admin
-            Mail::to($adminEmail)->send(new AdminFormSubmitMail($adminEmail, $userName));
-        
-            return back()->with('success', 'Data Submitted !!!');
-        }
+{
+    $formData = $request->validate([
+        'name' => 'required|string',
+        'email' => 'required|email',
+        'contact' => 'required',
+        'category' => 'required|string',
+        'service' => 'required|string',
+        'date' => 'required|date',
+        'time' => 'required',
+        'message' => 'required|string',
+        'status' => 'required',
+    ]);
 
+    $enquiry = Enquire::find($id);
+
+    if (!$enquiry) {
+        return back()->withErrors(['error' => 'Invalid Enquiry ID']);
+    }
+
+    // Retrieve timeslot information based on the selected time
+    $selectedTimeId = $request->input('time');
+    $timeSlot = ServiceTimeSlot::find($selectedTimeId);
+
+    if (!$timeSlot) {
+        \Log::error('Invalid Time ID');
+        return back()->withErrors(['time' => 'Invalid time selected']);
+    }
+
+    // Update the Enquire record with the updated formData and time information
+    $enquiry->update([
+        'name' => $formData['name'],
+        'email' => $formData['email'],
+        'contact' => $formData['contact'],
+        'category' => $formData['category'],
+        'service' => $formData['service'],
+        'date' => $formData['date'],
+        'time' => $formData['time'],
+        'message' => $formData['message'],
+        'status' => $formData['status'],
+        'service_start_time' => $timeSlot->service_start_time,
+        'service_end_time' => $timeSlot->service_end_time,
+        // Update other fields as needed...
+    ]);
+
+    // Get other required information from the updated Enquiry record
+    $userEmail = $enquiry->email;
+    $userName = $enquiry->name;
+    $category = $enquiry->category;
+    $service_name = $enquiry->service_name; // Assuming this field exists in your Enquire model
+    $date = $enquiry->date;
+    $service_start_time = $timeSlot->service_start_time;
+    $service_end_time = $timeSlot->service_end_time;
+
+    // Set the admin email address (replace with the actual admin email)
+    $adminEmail = 'vishal@webwideit.solutions';
+    $id = $enquiry->id;
+
+    // Send the updated email to the user
+    Mail::to($userEmail)->send(new UserConfirmMail(
+        $id,
+        $userEmail,
+        $userName,
+        $category,
+        $service_name,
+        $date,
+        $service_start_time,
+        $service_end_time
+    ));
+
+    // Send a separate updated email to the admin
+
+        Mail::to($adminEmail)->send(new AdminConfirmMail($adminEmail,
+        $id,
+        $userEmail,
+        $userName,
+        $category,
+        $service_name,
+        $date,
+        $service_start_time,
+        $service_end_time
+    ));
+
+    return back()->with('success', 'Enquiry Updated Successfully !!!');
+}
 }

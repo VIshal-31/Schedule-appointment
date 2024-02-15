@@ -5,7 +5,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class UserFormSubmitMail extends Mailable
+class UserConfirmMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -44,7 +44,7 @@ class UserFormSubmitMail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.userformsubmit_mail')
-            ->subject('Your Appointment Request Successfully Submitted');
+        return $this->view('emails.userConfimMail')
+            ->subject('Confirmation of Your Appointment Request');
     }
 }
